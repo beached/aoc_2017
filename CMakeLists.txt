@@ -8,9 +8,6 @@ find_package( Boost 1.59.0 REQUIRED COMPONENTS system filesystem regex unit_test
 
 add_definitions( -DBOOST_ALL_NO_LIB -DBOOST_ALL_DYN_LINK )
 
-find_package( Threads REQUIRED )
-find_package( CURL REQUIRED )
-
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL 'MSVC' )
 	add_compile_options( -D_WIN32_WINNT=0x0601 /std:c++latest )
 else( )
@@ -61,17 +58,17 @@ add_library ( aoc_2017 STATIC ${HEADER_FILES} ${SOURCE_FILES} )
 add_dependencies( aoc_2017 header_libraries_prj )
 
 add_executable( aoc_2017_day1_bin ${HEADER_FILES} ${TEST_FOLDER}/day1_tests.cpp )
-target_link_libraries( aoc_2017_day1_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${COMPILER_SPECIFIC_LIBS} )
+target_link_libraries( aoc_2017_day1_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
 add_dependencies( aoc_2017_day1_bin header_libraries_prj )
 add_test( aoc_2017_day1_test aoc_2017_day1_bin )
 
 add_executable( aoc_2017_day2_bin ${HEADER_FILES} ${TEST_FOLDER}/day2_tests.cpp )
-target_link_libraries( aoc_2017_day2_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${COMPILER_SPECIFIC_LIBS} )
+target_link_libraries( aoc_2017_day2_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
 add_dependencies( aoc_2017_day2_bin header_libraries_prj )
 add_test( aoc_2017_day2_test aoc_2017_day2_bin )
 
 add_executable( aoc_2017_day3_bin ${HEADER_FILES} ${TEST_FOLDER}/day3_tests.cpp )
-target_link_libraries( aoc_2017_day3_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${COMPILER_SPECIFIC_LIBS} )
+target_link_libraries( aoc_2017_day3_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
 add_dependencies( aoc_2017_day3_bin header_libraries_prj )
 add_test( aoc_2017_day3_test aoc_2017_day3_bin )
 

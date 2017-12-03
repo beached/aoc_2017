@@ -38,7 +38,7 @@ namespace daw {
 				std::vector<std::string> str_arry = {"5 1 9 5", "7 5 3", "2 4 6 8"};
 
 				auto const cs = checksum_values( str_arry );
-				BOOST_REQUIRE_EQUAL( cs, 18 );
+				BOOST_REQUIRE_EQUAL( 18, cs );
 				std::cout << "Test 1: Checksum is " << cs << '\n';
 			}
 
@@ -62,6 +62,7 @@ namespace daw {
 				  "707	668	1778	1687	2073	1892	62	1139	908	78	1885	800	945	712	57	65"};
 
 				auto const cs = checksum_values( str_arry );
+				BOOST_REQUIRE_EQUAL( 45972, cs );
 				std::cout << "Test 2: Checksum is " << cs << '\n';
 			}
 		} // namespace day2

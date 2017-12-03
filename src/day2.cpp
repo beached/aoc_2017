@@ -34,35 +34,50 @@ namespace daw {
 	namespace aoc_2017 {
 		namespace day2 {
 			namespace {
-				std::vector<std::string> split_row( daw::string_view row ) {
-					static auto const splitter = []( auto c ) {
-						return !(std::isdigit( c ) || c == '-');
-					};
-					std::vector<std::string> results{};
-					for( auto item : daw::split( row, splitter ) ) {
-						auto str = daw::string::trim_copy( item.to_string( ) );
-						if( !str.empty( ) ) {
-							results.push_back( std::move( str ) );
-						}
+				class str_splitter {
+					std::string m_str;
+					std::string m_delems;
+					char * m_ptr;
+
+				public:
+					str_splitter( std::string str, std::string delems )
+					  : m_str{std::move( str )}
+					  , m_delems{std::move( delems )}
+					  , m_ptr{strtok( &m_str[0], m_delems.c_str( ) )} {}
+
+
+					explicit operator bool( ) const noexcept {
+						return m_ptr != nullptr;
 					}
-					return results;
-				}
+
+					std::string operator( )( ) {
+						if( m_ptr == nullptr ) {
+							return "";
+						}
+						std::string result{ m_ptr };
+						m_ptr = strtok( nullptr, m_delems.c_str( ) );
+						return result;
+					}
+				};
 
 				intmax_t checksum_row( std::string const &str ) {
+					static char const delems[] = "\n\t\v\r ";
 					if( str.empty( ) ) {
 						throw std::runtime_error( "unexpected empty string" );
 					}
 					intmax_t min = std::numeric_limits<intmax_t>::max( );
 					intmax_t max = std::numeric_limits<intmax_t>::min( );
-					for( auto const &s : split_row( str ) ) {
-						std::stringstream ss{s};
-						intmax_t i = 0;
-						ss >> i;
-						if( i < min ) {
-							min = i;
-						}
-						if( i > max ) {
-							max = i;
+					str_splitter spl( str, delems );
+					while( spl ) {
+						errno = 0;
+						auto i = strtol( spl( ).c_str( ), nullptr, 10 );
+						if( i != 0 || errno == 0 ) {
+							if( i < min ) {
+								min = i;
+							}
+							if( i > max ) {
+								max = i;
+							}
 						}
 					}
 					return max - min;
