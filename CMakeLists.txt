@@ -49,10 +49,12 @@ include_directories( ${HEADER_FOLDER} )
 
 set( HEADER_FILES
 	${HEADER_FOLDER}/day1.h
+	${HEADER_FOLDER}/day2.h
 )
 
 set( SOURCE_FILES
 	${SOURCE_FOLDER}/day1.cpp
+	${SOURCE_FOLDER}/day2.cpp
 )
 
 add_library ( aoc_2017 STATIC ${HEADER_FILES} ${SOURCE_FILES} )
@@ -62,4 +64,9 @@ add_executable( aoc_2017_day1_bin ${HEADER_FILES} ${TEST_FOLDER}/day1_tests.cpp 
 target_link_libraries( aoc_2017_day1_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${COMPILER_SPECIFIC_LIBS} )
 add_dependencies( aoc_2017_day1_bin header_libraries_prj )
 add_test( aoc_2017_day1_test aoc_2017_day1_bin )
+
+add_executable( aoc_2017_day2_bin ${HEADER_FILES} ${TEST_FOLDER}/day2_tests.cpp )
+target_link_libraries( aoc_2017_day2_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${COMPILER_SPECIFIC_LIBS} )
+add_dependencies( aoc_2017_day2_bin header_libraries_prj )
+add_test( aoc_2017_day2_test aoc_2017_day2_bin )
 

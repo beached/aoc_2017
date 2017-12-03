@@ -20,15 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <cstdint>
-#include <cstdlib>
-#include <iostream>
+#pragma once
 
-#include "day1.h"
+#include <string>
+#include <vector>
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day1 {}
-	} // namespace aoc_2017
+		namespace day2 {
+			intmax_t checksum_values( std::vector<std::string> const & str );
+		} // namespace day2
+	}   // namespace aoc_2017
 } // namespace daw
 
