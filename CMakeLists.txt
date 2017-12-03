@@ -70,3 +70,8 @@ target_link_libraries( aoc_2017_day2_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_
 add_dependencies( aoc_2017_day2_bin header_libraries_prj )
 add_test( aoc_2017_day2_test aoc_2017_day2_bin )
 
+add_executable( aoc_2017_day3_bin ${HEADER_FILES} ${TEST_FOLDER}/day3_tests.cpp )
+target_link_libraries( aoc_2017_day3_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${COMPILER_SPECIFIC_LIBS} )
+add_dependencies( aoc_2017_day3_bin header_libraries_prj )
+add_test( aoc_2017_day3_test aoc_2017_day3_bin )
+
