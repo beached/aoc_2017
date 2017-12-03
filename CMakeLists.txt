@@ -47,11 +47,13 @@ include_directories( ${HEADER_FOLDER} )
 set( HEADER_FILES
 	${HEADER_FOLDER}/day1.h
 	${HEADER_FOLDER}/day2.h
+	${HEADER_FOLDER}/day3.h
 )
 
 set( SOURCE_FILES
 	${SOURCE_FOLDER}/day1.cpp
 	${SOURCE_FOLDER}/day2.cpp
+	${SOURCE_FOLDER}/day3.cpp
 )
 
 add_library ( aoc_2017 STATIC ${HEADER_FILES} ${SOURCE_FILES} )

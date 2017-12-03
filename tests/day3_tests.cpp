@@ -32,8 +32,51 @@
 namespace daw {
 	namespace aoc_2017 {
 		namespace day3 {
-			BOOST_AUTO_TEST_CASE( test_001 ) {
+			/*
+			BOOST_AUTO_TEST_CASE( test_1 ) {
+				BOOST_REQUIRE_EQUAL( 0, calc_distance( 1 ) );
+			}
 
+			BOOST_AUTO_TEST_CASE( test_12 ) {
+				BOOST_REQUIRE_EQUAL( 3, calc_distance( 12 ) );
+			}
+
+			BOOST_AUTO_TEST_CASE( test_23 ) {
+				BOOST_REQUIRE_EQUAL( 2, calc_distance( 23 ) );
+			}
+
+			BOOST_AUTO_TEST_CASE( test_1024 ) {
+				BOOST_REQUIRE_EQUAL( 31, calc_distance( 1024 ) );
+			}
+
+			BOOST_AUTO_TEST_CASE( test_25 ) {
+				BOOST_REQUIRE_EQUAL( 4, calc_distance( 25 ) );
+			}
+
+			BOOST_AUTO_TEST_CASE( test_21 ) {
+				BOOST_REQUIRE_EQUAL( 4, calc_distance( 21 ) );
+			}
+
+			BOOST_AUTO_TEST_CASE( test_17 ) {
+				BOOST_REQUIRE_EQUAL( 4, calc_distance( 17 ) );
+			}
+
+			BOOST_AUTO_TEST_CASE( test_13 ) {
+				BOOST_REQUIRE_EQUAL( 4, calc_distance( 13 ) );
+			}
+
+			BOOST_AUTO_TEST_CASE( test_11 ) {
+				BOOST_REQUIRE_EQUAL( 2, calc_distance( 11 ) );
+			}
+
+			BOOST_AUTO_TEST_CASE( test_10 ) {
+				BOOST_REQUIRE_EQUAL( 3, calc_distance( 10 ) );
+			}
+			*/
+			BOOST_AUTO_TEST_CASE( test_325489 ) {
+				auto answer1 = calc_distance( 325489 );
+				BOOST_REQUIRE_EQUAL( 552, answer1 );
+				std::cout << "answer 1: " << answer1 << '\n';
 			}
 		} // namespace day3
 	}   // namespace aoc_2017

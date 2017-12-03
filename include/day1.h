@@ -29,27 +29,33 @@ namespace daw {
 		namespace day1 {
 			namespace impl {
 				struct summer_t {
-					char last_val;
-					constexpr summer_t( char first_val ) noexcept
-					  : last_val{first_val} {}
+					daw::string_view orig;
+					size_t difference;
+					size_t pos;
+
+					constexpr summer_t( daw::string_view str, size_t diff = 1 ) noexcept
+					  : orig{str}
+					  , difference{diff}
+					  , pos{0} {}
 
 					constexpr size_t operator( )( size_t sum, char cur_val ) noexcept {
-						if( cur_val == last_val ) {
+						auto other_pos = ( pos + difference ) % orig.size( );
+						auto other = orig[other_pos];
+						if( cur_val == other ) {
 							sum += static_cast<size_t>( cur_val - '0' );
 						}
-						last_val = cur_val;
+						++pos;
 						return std::move( sum );
 					}
 				};
 			} // namespace impl
 
-			constexpr size_t sum_values( daw::string_view str ) noexcept {
-				impl::summer_t summer{str.front( )};
-				auto sum =
-				  daw::algorithm::accumulate( daw::next( str.cbegin( ) ), str.cend( ), static_cast<size_t>( 0 ), summer );
-				sum = summer( sum, str.front( ) );
-				return sum;
+			constexpr size_t sum_values( daw::string_view str, size_t diff = 1 ) noexcept {
+				impl::summer_t summer{str, diff};
+				return daw::algorithm::accumulate( str.cbegin( ), str.cend( ), static_cast<size_t>( 0 ), summer );
 			}
+
+			//constexpr size_t sum_values_p2( daw::string_view str ) noexcept {}
 		} // namespace day1
 	}   // namespace aoc_2017
 } // namespace daw
