@@ -35,12 +35,6 @@
  *	20   7   8   9  10
  *	21  22  23  24  25
  *
- *   8  7  6  5  4
- *   9  4  3  2  3
- *  10  5  1  1  3
- *  11  6  7  8  1
- *  12 13 14 15 16
- *
  *  4  3  2  3  4	(n-1) = 4, 2, or 0
  *  3  2  1  2  3   (n-1)/2 = 2, 1, or 0
  *  2  1  0  1  2
@@ -83,6 +77,11 @@ namespace daw {
 				auto dist2 = dist_from( value, vals.corner_value - vals.side_length );
 				return vals.side_length - daw::min( dist1, dist2 );
 			}
+
+			namespace impl {
+				std::pair<intmax_t, intmax_t> spiral_length_to_xy( intmax_t len );
+			}
+			intmax_t calc_sum( intmax_t value );
 		} // namespace day3
 	}   // namespace aoc_2017
 } // namespace daw
