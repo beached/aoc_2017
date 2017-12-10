@@ -37,7 +37,7 @@ namespace daw {
 		namespace day10 {
 			namespace impl {
 				template<typename Trans>
-				void reverse_subset( size_t pos, size_t length, Trans &translate ) {
+				void reverse_subset( size_t const pos, size_t const length, Trans &translate ) {
 					for( size_t n = 0; n < length / 2; ++n ) {
 						using std::swap;
 						swap( translate( pos + n ), translate( ( pos + length - 1 ) - n ) );
@@ -67,7 +67,7 @@ namespace daw {
 			} // namespace impl
 
 			template<typename Container, typename Lengths>
-			constexpr auto do_hash( Container &lst, Lengths const &lengths, daw::natural_t<size_t> rounds = 1 ) noexcept {
+			constexpr auto do_hash( Container &lst, Lengths const &lengths, daw::natural_t<size_t> const rounds = 1 ) noexcept {
 				size_t position = 0;
 				size_t skip_size = 0;
 				auto translator = impl::make_translator( lst );
