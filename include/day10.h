@@ -77,7 +77,7 @@ namespace daw {
 					return translator_t<Container>{c};
 				}
 
-				constexpr char to_nibble( char c ) noexcept {
+				constexpr char to_nibble( uint8_t c ) noexcept {
 					if( c < 10 ) {
 						return '0' + c;
 					}
@@ -85,14 +85,14 @@ namespace daw {
 				}
 
 				constexpr char to_hex_low_nibble( char c ) noexcept {
-					c &= 0x0F;
-					return to_nibble( c );
+					uint8_t n = static_cast<uint8_t>(c) & 0x0F;
+					return to_nibble( n );
 				}
 
 				constexpr char to_hex_high_nibble( char c ) noexcept {
-					c &= 0xF0;
-					c >>= 4;
-					return to_nibble( c );
+					uint8_t n = static_cast<uint8_t>(c) & 0xF0;
+					n >>= 4;
+					return to_nibble( n );
 				}
 
 				template<typename Container, typename Lengths>
