@@ -20,17 +20,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-
+#include <cstring>
 #include <string>
 #include <vector>
 
+#include "str_splitter.h"
+
 namespace daw {
-	namespace aoc_2017 {
-		namespace day2 {
-			intmax_t checksum_values( std::vector<std::string> const & str );
-			intmax_t checksum_values2( std::vector<std::string> const & rows );
-		} // namespace day2
-	}   // namespace aoc_2017
+	str_splitter::str_splitter( std::string str, std::string delems )
+	  : m_str{std::move( str )}
+	  , m_delems{std::move( delems )}
+	  , m_ptr{strtok( &m_str[0], m_delems.c_str( ) )} {}
+
+	str_splitter::operator bool( ) const noexcept {
+		return m_ptr != nullptr;
+	}
+
+	std::string str_splitter::operator( )( ) {
+		if( m_ptr == nullptr ) {
+			return "";
+		}
+		std::string result{m_ptr};
+		m_ptr = strtok( nullptr, m_delems.c_str( ) );
+		return result;
+	}
+
+	std::vector<std::string> str_splitter::to_strings( ) {
+		std::vector<std::string> result{};
+		while( m_ptr != nullptr ) {
+			result.push_back( operator( )( ) );
+		}
+		return result;
+	}
 } // namespace daw
 

@@ -25,12 +25,24 @@
 #include <string>
 #include <vector>
 
+#include <daw/daw_string_view.h>
+
 namespace daw {
 	namespace aoc_2017 {
-		namespace day2 {
-			intmax_t checksum_values( std::vector<std::string> const & str );
-			intmax_t checksum_values2( std::vector<std::string> const & rows );
-		} // namespace day2
+		namespace day7 {
+			struct prog_t {
+				std::string name;
+				intmax_t weight;
+				std::vector<std::string> children;
+				std::string parent;
+
+				prog_t( std::string Name, intmax_t Weight, std::vector<std::string> Children );
+			};
+			using nodes_t = std::unordered_map<std::string, prog_t>;
+			using root_t = std::pair<std::string, nodes_t>;
+
+			root_t get_root( std::vector<std::string> const &rows );
+			intmax_t get_new_weight( std::vector<std::string> const &rows );
+		} // namespace day7
 	}   // namespace aoc_2017
 } // namespace daw
-

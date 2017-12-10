@@ -22,15 +22,14 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
+#include <daw/daw_string_view.h>
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day2 {
-			intmax_t checksum_values( std::vector<std::string> const & str );
-			intmax_t checksum_values2( std::vector<std::string> const & rows );
-		} // namespace day2
+		namespace day9 {
+			size_t count_groups( daw::string_view input );
+			size_t count_groups2( daw::string_view input );
+		} // namespace day9
 	}   // namespace aoc_2017
 } // namespace daw
 

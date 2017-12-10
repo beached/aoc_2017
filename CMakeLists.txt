@@ -51,20 +51,22 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/day3.h
 	${HEADER_FOLDER}/day4.h
 	${HEADER_FOLDER}/day5.h
+	${HEADER_FOLDER}/str_splitter.h
 )
 
 set( SOURCE_FILES
 	${SOURCE_FOLDER}/day1.cpp
 	${SOURCE_FOLDER}/day2.cpp
 	${SOURCE_FOLDER}/day3.cpp
-	${SOURCE_FOLDER}/day4.cpp
-	${SOURCE_FOLDER}/day5.cpp
 )
 
 enable_testing( )
 
 add_library ( aoc_2017 STATIC ${HEADER_FILES} ${SOURCE_FILES} )
 add_dependencies( aoc_2017 header_libraries_prj )
+
+add_library ( str_splitter STATIC ${HEADER_FILES} ${SOURCE_FOLDER}/str_splitter.cpp )
+add_dependencies( str_splitter header_libraries_prj )
 
 add_executable( aoc_2017_day1_bin ${HEADER_FILES} ${TEST_FOLDER}/day1_tests.cpp )
 target_link_libraries( aoc_2017_day1_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
@@ -81,18 +83,33 @@ target_link_libraries( aoc_2017_day3_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_
 add_dependencies( aoc_2017_day3_bin header_libraries_prj )
 add_test( aoc_2017_day3_test aoc_2017_day3_bin )
 
-add_executable( aoc_2017_day4_bin ${HEADER_FILES} ${TEST_FOLDER}/day4_tests.cpp )
-target_link_libraries( aoc_2017_day4_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
+add_executable( aoc_2017_day4_bin ${HEADER_FILES} ${SOURCE_FOLDER}/day4.cpp ${TEST_FOLDER}/day4_tests.cpp )
+target_link_libraries( aoc_2017_day4_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
 add_dependencies( aoc_2017_day4_bin header_libraries_prj )
 add_test( aoc_2017_day4_test aoc_2017_day4_bin )
 
-add_executable( aoc_2017_day5_bin ${HEADER_FILES} ${TEST_FOLDER}/day5_tests.cpp )
-target_link_libraries( aoc_2017_day5_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
+add_executable( aoc_2017_day5_bin ${HEADER_FILES} ${SOURCE_FOLDER}/day5.cpp ${TEST_FOLDER}/day5_tests.cpp )
+target_link_libraries( aoc_2017_day5_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
 add_dependencies( aoc_2017_day5_bin header_libraries_prj )
-add_test( aoc_2017_day5_test aoc_2017_day4_bin )
+add_test( aoc_2017_day5_test aoc_2017_day5_bin )
 
-add_executable( aoc_2017_day6_bin ${HEADER_FILES} ${TEST_FOLDER}/day6_tests.cpp )
-target_link_libraries( aoc_2017_day6_bin aoc_2017 ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
+add_executable( aoc_2017_day6_bin ${HEADER_FILES} ${SOURCE_FOLDER}/day6.cpp ${TEST_FOLDER}/day6_tests.cpp )
+target_link_libraries( aoc_2017_day6_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
 add_dependencies( aoc_2017_day6_bin header_libraries_prj )
-add_test( aoc_2017_day6_test aoc_2017_day4_bin )
+add_test( aoc_2017_day6_test aoc_2017_day6_bin )
+
+add_executable( aoc_2017_day7_bin ${HEADER_FILES} ${SOURCE_FOLDER}/day7.cpp ${TEST_FOLDER}/day7_tests.cpp )
+target_link_libraries( aoc_2017_day7_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
+add_dependencies( aoc_2017_day7_bin header_libraries_prj )
+add_test( aoc_2017_day7_test aoc_2017_day7_bin )
+
+add_executable( aoc_2017_day8_bin ${HEADER_FILES} ${SOURCE_FOLDER}/day8.cpp ${TEST_FOLDER}/day8_tests.cpp )
+target_link_libraries( aoc_2017_day8_bin str_splitter ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
+add_dependencies( aoc_2017_day8_bin header_libraries_prj )
+add_test( aoc_2017_day8_test aoc_2017_day8_bin )
+
+add_executable( aoc_2017_day9_bin ${HEADER_FILES} ${SOURCE_FOLDER}/day9.cpp ${TEST_FOLDER}/day9_tests.cpp )
+target_link_libraries( aoc_2017_day9_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
+add_dependencies( aoc_2017_day9_bin header_libraries_prj )
+add_test( aoc_2017_day9_test aoc_2017_day9_bin )
 

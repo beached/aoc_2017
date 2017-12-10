@@ -26,11 +26,16 @@
 #include <vector>
 
 namespace daw {
-	namespace aoc_2017 {
-		namespace day2 {
-			intmax_t checksum_values( std::vector<std::string> const & str );
-			intmax_t checksum_values2( std::vector<std::string> const & rows );
-		} // namespace day2
-	}   // namespace aoc_2017
+	class str_splitter {
+		std::string m_str;
+		std::string m_delems;
+		char *m_ptr;
+
+	public:
+		str_splitter( std::string str, std::string delems );
+		explicit operator bool( ) const noexcept;
+		std::string operator( )( );
+		std::vector<std::string> to_strings( );
+	};
 } // namespace daw
 
