@@ -40,7 +40,7 @@ namespace daw {
 				BOOST_REQUIRE_EQUAL( ans, 12 );
 			}
 
-			intmax_t test_hash( std::vector<intmax_t> lengths ) {
+			size_t test_hash( std::vector<int> lengths ) {
 				std::array<intmax_t, 256> init_state = {
 				  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,   10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,
 				  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,

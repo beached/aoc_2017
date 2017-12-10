@@ -36,8 +36,8 @@ namespace daw {
 		namespace day10 {
 			namespace impl {
 				template<typename Trans>
-				void reverse_subset( intmax_t pos, intmax_t length, Trans &translate ) {
-					for( intmax_t n = 0; n < length / 2; ++n ) {
+				void reverse_subset( size_t pos, size_t length, Trans &translate ) {
+					for( size_t n = 0; n < length / 2; ++n ) {
 						using std::swap;
 						swap( translate( pos + n ), translate( ( pos + length - 1 ) - n ) );
 					}
@@ -50,15 +50,11 @@ namespace daw {
 					constexpr translator_t( Container &c ) noexcept
 					  : lst{c} {}
 
-					constexpr auto &operator( )( intmax_t pos ) noexcept {
-						if( pos >= static_cast<intmax_t>( lst.size( ) ) ) {
-							return lst[static_cast<size_t>( pos ) % lst.size( )];
-						} else if( pos < 0 ) {
-							pos *= -1;
-							pos %= static_cast<intmax_t>( lst.size( ) );
-							return lst[( lst.size( ) - 1 ) - static_cast<size_t>( pos )];
+					constexpr auto &operator( )( size_t pos ) noexcept {
+						if( pos >= lst.size( ) ) {
+							pos %= lst.size( );
 						}
-						return lst[static_cast<size_t>( pos )];
+						return lst[pos];
 					}
 				};
 
@@ -68,27 +64,27 @@ namespace daw {
 				}
 
 				template<typename Container, typename Lengths>
-				constexpr auto do_hash_impl( Container &lst, Lengths const &lengths, intmax_t position = 0,
-				                             intmax_t skip_size = 0 ) noexcept {
+				constexpr auto do_hash_impl( Container &lst, Lengths const &lengths, size_t position = 0,
+				                             size_t skip_size = 0 ) noexcept {
 					struct state_t {
-						intmax_t position;
-						intmax_t skip_size;
-						std::decay_t<decltype( lst[0] )> result;
+						size_t position;
+						size_t skip_size;
+						size_t result;
 					};
 					state_t state{position, skip_size, 0};
 					auto translator = impl::make_translator( lst );
 					for( auto current_length : lengths ) {
-						impl::reverse_subset( state.position, current_length, translator );
-						state.position += current_length + state.skip_size;
+						impl::reverse_subset( state.position, static_cast<size_t>( current_length ), translator );
+						state.position += static_cast<size_t>( current_length ) + state.skip_size;
 						++state.skip_size;
 					}
-					state.result = lst[0] * lst[1];
+					state.result = static_cast<size_t>( lst[0] * lst[1] );
 					return state;
 				}
 			} // namespace impl
 
 			template<typename Container, typename Lengths>
-			constexpr intmax_t do_hash( Container &lst, Lengths const &lengths ) noexcept {
+			constexpr size_t do_hash( Container &lst, Lengths const &lengths ) noexcept {
 				return impl::do_hash_impl( lst, lengths ).result;
 			}
 
@@ -103,7 +99,7 @@ namespace daw {
 
 				std::string result{};
 				for( size_t n = 0; n < 16; ++n ) {
-					auto const first = std::next( init_state.begin( ), static_cast<intmax_t>(n) * 16 );
+					auto const first = std::next( init_state.begin( ), static_cast<intmax_t>( n ) * 16 );
 					char const tmp = std::accumulate( first, std::next( first, 16 ), static_cast<char>( 0 ),
 					                                  []( auto lhs, auto rhs ) { return lhs ^ rhs; } );
 					daw::hex_lc( tmp, std::back_inserter( result ) );
@@ -113,4 +109,3 @@ namespace daw {
 		} // namespace day10
 	}   // namespace aoc_2017
 } // namespace daw
-
