@@ -29,8 +29,8 @@
 #include <numeric>
 #include <vector>
 
-#include <daw/daw_utility.h>
 #include <daw/daw_natural.h>
+#include <daw/daw_utility.h>
 
 namespace daw {
 	namespace aoc_2017 {
@@ -67,7 +67,8 @@ namespace daw {
 			} // namespace impl
 
 			template<typename Container, typename Lengths>
-			constexpr auto do_hash( Container &lst, Lengths const &lengths, daw::natural_t<size_t> const rounds = 1 ) noexcept {
+			constexpr auto do_hash( Container &lst, Lengths const &lengths,
+			                        daw::natural_t<size_t> const rounds = 1 ) noexcept {
 				size_t position = 0;
 				size_t skip_size = 0;
 				auto translator = impl::make_translator( lst );
@@ -83,6 +84,7 @@ namespace daw {
 
 			template<typename Container, typename Lengths>
 			std::string do_hash2( Container &init_state, Lengths lengths ) {
+				daw::exception::Assert( init_state.size( ) == 256, "Initial state must be 256 elements in size" );
 				lengths.insert( lengths.end( ), {17, 31, 73, 47, 23} );
 
 				do_hash( init_state, lengths, 64 );
@@ -90,8 +92,9 @@ namespace daw {
 				std::string result{};
 				for( size_t n = 0; n < 16; ++n ) {
 					auto const first = std::next( init_state.begin( ), static_cast<intmax_t>( n ) * 16 );
-					char const tmp = std::accumulate( first, std::next( first, 16 ), static_cast<char>( 0 ),
-					                                  []( auto lhs, auto rhs ) { return lhs ^ rhs; } );
+					char const tmp =
+					  std::accumulate( first, std::next( first, 16 ),
+					                   static_cast<char>( 0 ), []( auto lhs, auto rhs ) noexcept { return lhs ^ rhs; } );
 					daw::hex_lc( tmp, std::back_inserter( result ) );
 				}
 				return result;
