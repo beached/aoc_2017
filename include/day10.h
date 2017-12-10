@@ -67,11 +67,11 @@ namespace daw {
 			} // namespace impl
 
 			template<typename Container, typename Lengths>
-			constexpr auto do_hash( Container &lst, Lengths const &lengths,
+			constexpr auto do_hash( Container &initial_state, Lengths const &lengths,
 			                        daw::natural_t<size_t> const rounds = 1 ) noexcept {
 				size_t position = 0;
 				size_t skip_size = 0;
-				auto translator = impl::make_translator( lst );
+				auto translator = impl::make_translator( initial_state );
 				for( size_t round = 0; round < rounds; ++round ) {
 					for( auto current_length : lengths ) {
 						impl::reverse_subset( position, static_cast<size_t>( current_length ), translator );
@@ -79,19 +79,19 @@ namespace daw {
 						++skip_size;
 					}
 				}
-				return lst[0] * lst[1];
+				return initial_state[0] * initial_state[1];
 			}
 
 			template<typename Container, typename Lengths>
-			std::string do_hash2( Container &init_state, Lengths lengths ) {
-				daw::exception::Assert( init_state.size( ) == 256, "Initial state must be 256 elements in size" );
+			std::string do_hash2( Container &initial_state, Lengths lengths ) {
+				daw::exception::Assert( initial_state.size( ) == 256, "Initial state must be 256 elements in size" );
 				lengths.insert( lengths.end( ), {17, 31, 73, 47, 23} );
 
-				do_hash( init_state, lengths, 64 );
+				do_hash( initial_state, lengths, 64 );
 
 				std::string result{};
 				for( size_t n = 0; n < 16; ++n ) {
-					auto const first = std::next( init_state.begin( ), static_cast<intmax_t>( n ) * 16 );
+					auto const first = std::next( initial_state.begin( ), static_cast<intmax_t>( n ) * 16 );
 					char const tmp =
 					  std::accumulate( first, std::next( first, 16 ),
 					                   static_cast<char>( 0 ), []( auto lhs, auto rhs ) noexcept { return lhs ^ rhs; } );
