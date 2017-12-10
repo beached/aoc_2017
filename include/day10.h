@@ -94,9 +94,9 @@ namespace daw {
 					};
 					state_t state{position, skip_size, 0};
 					auto translator = impl::make_translator( lst );
-					for( auto lng : lengths ) {
-						impl::reverse_subset( state.position, lng, translator );
-						state.position += lng + state.skip_size;
+					for( auto current_length : lengths ) {
+						impl::reverse_subset( state.position, current_length, translator );
+						state.position += current_length + state.skip_size;
 						++state.skip_size;
 					}
 					state.result = lst[0] * lst[1];
