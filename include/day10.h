@@ -29,7 +29,6 @@
 #include <numeric>
 #include <vector>
 
-#include <daw/daw_natural.h>
 #include <daw/daw_utility.h>
 
 namespace daw {
@@ -67,8 +66,8 @@ namespace daw {
 			} // namespace impl
 
 			template<typename Container, typename Lengths>
-			constexpr auto do_hash( Container &initial_state, Lengths const &lengths,
-			                        daw::natural_t<size_t> const rounds = 1 ) noexcept {
+			constexpr auto do_hash( Container &initial_state, Lengths const &lengths, size_t const rounds = 1 ) noexcept {
+				daw::exception::Assert( rounds > 0, "There must be a positive/non-zero number of rounds" );
 				size_t position = 0;
 				size_t skip_size = 0;
 				auto translator = impl::make_translator( initial_state );
@@ -79,7 +78,9 @@ namespace daw {
 						++skip_size;
 					}
 				}
-				return initial_state[0] * initial_state[1];
+				auto result = initial_state[0] * initial_state[1];
+				daw::exception::Assert( result >= 0, "Expected a positive result" );
+				return result;
 			}
 
 			template<typename Container, typename Lengths>
@@ -97,6 +98,7 @@ namespace daw {
 					                   static_cast<char>( 0 ), []( auto lhs, auto rhs ) noexcept { return lhs ^ rhs; } );
 					daw::hex_lc( tmp, std::back_inserter( result ) );
 				}
+				daw::exception::Assert( result.size( ) == 32, "Expected a result of 32 characters" );
 				return result;
 			}
 		} // namespace day10
