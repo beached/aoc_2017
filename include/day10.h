@@ -63,39 +63,28 @@ namespace daw {
 					return translator_t<Container>{c};
 				}
 
-				template<typename Container, typename Lengths>
-				constexpr auto do_hash_impl( Container &lst, Lengths const &lengths, size_t position = 0,
-				                             size_t skip_size = 0 ) noexcept {
-					struct state_t {
-						size_t position;
-						size_t skip_size;
-						size_t result;
-					};
-					state_t state{position, skip_size, 0};
-					auto translator = impl::make_translator( lst );
-					for( auto current_length : lengths ) {
-						impl::reverse_subset( state.position, static_cast<size_t>( current_length ), translator );
-						state.position += static_cast<size_t>( current_length ) + state.skip_size;
-						++state.skip_size;
-					}
-					state.result = static_cast<size_t>( lst[0] * lst[1] );
-					return state;
-				}
 			} // namespace impl
 
 			template<typename Container, typename Lengths>
-			constexpr size_t do_hash( Container &lst, Lengths const &lengths ) noexcept {
-				return impl::do_hash_impl( lst, lengths ).result;
+			constexpr auto do_hash( Container &lst, Lengths const &lengths, size_t rounds = 1 ) noexcept {
+				size_t position = 0;
+				size_t skip_size = 0;
+				auto translator = impl::make_translator( lst );
+				for( size_t round = 0; round < rounds; ++round ) {
+					for( auto current_length : lengths ) {
+						impl::reverse_subset( position, static_cast<size_t>( current_length ), translator );
+						position += static_cast<size_t>( current_length ) + skip_size;
+						++skip_size;
+					}
+				}
+				return lst[0] * lst[1];
 			}
 
 			template<typename Container, typename Lengths>
 			std::string do_hash2( Container &init_state, Lengths lengths ) {
 				lengths.insert( lengths.end( ), {17, 31, 73, 47, 23} );
 
-				auto state = impl::do_hash_impl( init_state, lengths, 0, 0 );
-				for( size_t round = 1; round < 64; ++round ) {
-					state = impl::do_hash_impl( init_state, lengths, state.position, state.skip_size );
-				}
+				do_hash( init_state, lengths, 64 );
 
 				std::string result{};
 				for( size_t n = 0; n < 16; ++n ) {
