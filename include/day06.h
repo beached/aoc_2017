@@ -31,7 +31,7 @@
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day6 {
+		namespace day06 {
 			template<typename T>
 			void permute( daw::span<T> blocks ) {
 				if( blocks.empty( ) ) {
@@ -80,7 +80,7 @@ namespace daw {
 				}
 			}
 
-		} // namespace day6
+		} // namespace day06
 	}   // namespace aoc_2017
 } // namespace daw
 

@@ -30,7 +30,7 @@
 #include <daw/daw_heap_array.h>
 
 //#include "buff_2d.h"
-#include "day3.h"
+#include "day03.h"
 // The MIT License (MIT)
 //
 // Copyright (c) 2017 Darrell Wright
@@ -60,11 +60,11 @@
 
 #include <daw/daw_heap_array.h>
 
-#include "day3.h"
+#include "day03.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day3 {
+		namespace day03 {
 			namespace impl {
 				std::pair<intmax_t, intmax_t> spiral_length_to_xy( intmax_t len ) {
 					/*
@@ -155,6 +155,6 @@ namespace daw {
 				throw std::runtime_error( "Should never reach here" );
 				*/
 			}
-		} // namespace day3
+		} // namespace day03
 	}   // namespace aoc_2017
 } // namespace daw

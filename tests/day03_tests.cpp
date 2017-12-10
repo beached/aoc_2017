@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define BOOST_TEST_MODULE aoc_2017_day3
+#define BOOST_TEST_MODULE aoc_2017_day03
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
 #include <daw/boost_test.h>
@@ -30,11 +30,11 @@
 #include <iostream>
 
 #include "buff_2d.h"
-#include "day3.h"
+#include "day03.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day3 {
+		namespace day03 {
 			/*
 			BOOST_AUTO_TEST_CASE( test_1 ) {
 			  BOOST_REQUIRE_EQUAL( 0, calc_distance( 1 ) );
@@ -155,6 +155,6 @@ namespace daw {
 				std::cout << "answer 2: " << answer2 << '\n';
 			}
 
-		} // namespace day3
+		} // namespace day03
 	}   // namespace aoc_2017
 } // namespace daw

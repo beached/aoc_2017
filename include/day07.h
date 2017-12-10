@@ -29,7 +29,7 @@
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day7 {
+		namespace day07 {
 			struct prog_t {
 				std::string name;
 				intmax_t weight;
@@ -43,6 +43,6 @@ namespace daw {
 
 			root_t get_root( std::vector<std::string> const &rows );
 			intmax_t get_new_weight( std::vector<std::string> const &rows );
-		} // namespace day7
+		} // namespace day07
 	}   // namespace aoc_2017
 } // namespace daw

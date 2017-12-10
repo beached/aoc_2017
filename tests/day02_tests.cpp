@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define BOOST_TEST_MODULE aoc_2017_day2
+#define BOOST_TEST_MODULE aoc_2017_day02
 #include <daw/boost_test.h>
 
 #include <cstdint>
@@ -29,11 +29,11 @@
 #include <string>
 #include <vector>
 
-#include "day2.h"
+#include "day02.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day2 {
+		namespace day02 {
 			BOOST_AUTO_TEST_CASE( test_001 ) {
 				std::vector<std::string> str_arry = {"5 1 9 5", "7 5 3", "2 4 6 8"};
 
@@ -95,7 +95,7 @@ namespace daw {
 				BOOST_REQUIRE_EQUAL( 326, cs );
 				std::cout << "Answer 2: Checksum is " << cs << '\n';
 			}
-		} // namespace day2
+		} // namespace day02
 	}   // namespace aoc_2017
 } // namespace daw
 

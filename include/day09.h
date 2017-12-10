@@ -22,47 +22,14 @@
 
 #pragma once
 
-#include <cstdint>
-
-#include <daw/daw_span.h>
 #include <daw/daw_string_view.h>
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day5 {
-			template<typename T>
-			constexpr size_t count_steps( daw::span<T> maze ) noexcept {
-				size_t pos = 0;
-				intmax_t next_pos = 0;
-				size_t count = 0;
-				while( 0 <= next_pos && next_pos < static_cast<intmax_t>( maze.size( ) ) ) {
-					++count;
-					pos = static_cast<size_t>( next_pos );
-					next_pos += static_cast<intmax_t>( maze[pos] );
-					++maze[pos];
-				}
-				return count;
-			}
-
-			template<typename T>
-			constexpr size_t count_steps2( daw::span<T> maze ) noexcept {
-				size_t pos = 0;
-				intmax_t next_pos = 0;
-				size_t count = 0;
-				while( 0 <= next_pos && next_pos < static_cast<intmax_t>( maze.size( ) ) ) {
-					++count;
-					pos = static_cast<size_t>( next_pos );
-					next_pos += static_cast<intmax_t>( maze[pos] );
-					if( maze[pos] >= 3 ) {
-						--maze[pos];
-					} else {
-						++maze[pos];
-					}
-				}
-				return count;
-			}
-
-		} // namespace day5
+		namespace day09 {
+			size_t count_groups( daw::string_view input );
+			size_t count_groups2( daw::string_view input );
+		} // namespace day09
 	}   // namespace aoc_2017
 } // namespace daw
 

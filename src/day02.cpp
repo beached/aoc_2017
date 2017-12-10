@@ -29,11 +29,11 @@
 #include <daw/daw_string.h>
 #include <daw/daw_string_view.h>
 
-#include "day2.h"
+#include "day02.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day2 {
+		namespace day02 {
 			namespace {
 				class str_splitter {
 					std::string m_str;
@@ -127,7 +127,7 @@ namespace daw {
 				}
 				return checksum;
 			}
-		} // namespace day2
+		} // namespace day02
 	}   // namespace aoc_2017
 } // namespace daw
 

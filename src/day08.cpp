@@ -27,12 +27,12 @@
 #include <unordered_map>
 #include <vector>
 
-#include "day8.h"
+#include "day08.h"
 #include "str_splitter.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day8 {
+		namespace day08 {
 			namespace {
 				template<typename Func>
 				std::pair<std::string const, std::function<bool( intmax_t, intmax_t )>> make_op( std::string op,
@@ -104,7 +104,7 @@ namespace daw {
 				}
 				return comp.largest_ever;
 			}
-		} // namespace day8
+		} // namespace day08
 	}   // namespace aoc_2017
 } // namespace daw
 

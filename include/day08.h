@@ -27,10 +27,10 @@
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day8 {
+		namespace day08 {
 			intmax_t largest_value( std::vector<std::string> const &calls );
 			std::pair<std::string, intmax_t> largest_value_ever( std::vector<std::string> const &calls );
-		} // namespace day8
+		} // namespace day08
 	}   // namespace aoc_2017
 } // namespace daw
 

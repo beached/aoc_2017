@@ -20,16 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include <cstdint>
+#include <cstdlib>
+#include <iostream>
 
-#include <daw/daw_string_view.h>
+#include "day01.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day4 {
-			bool is_valid_pp( daw::string_view pass_phrase );
-			bool is_valid_pp2( daw::string_view pass_phrase );
-		} // namespace day4
-	}   // namespace aoc_2017
+		namespace day01 {}
+	} // namespace aoc_2017
 } // namespace daw
 

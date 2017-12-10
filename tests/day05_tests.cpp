@@ -20,18 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define BOOST_TEST_MODULE aoc_2017_day5
+#define BOOST_TEST_MODULE aoc_2017_day05
 #include <daw/boost_test.h>
 
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
 
-#include "day5.h"
+#include "day05.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day5 {
+		namespace day05 {
 			BOOST_AUTO_TEST_CASE( test_001 ) {
 				std::vector<intmax_t> tst = {0, 3, 0, 1, -3};
 				BOOST_REQUIRE_EQUAL( count_steps( daw::make_span( tst ) ), 5 );
@@ -169,7 +169,7 @@ namespace daw {
 				BOOST_REQUIRE_EQUAL( ans1, 22570529 );
 				std::cout << "Answer #2: " << ans1 << '\n';
 			}
-		} // namespace day5
+		} // namespace day05
 	}   // namespace aoc_2017
 } // namespace daw
 

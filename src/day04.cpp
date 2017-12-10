@@ -27,11 +27,11 @@
 #include <set>
 #include <sstream>
 
-#include "day4.h"
+#include "day04.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day4 {
+		namespace day04 {
 			// Part 1
 			bool is_valid_pp( daw::string_view pass_phrase ) {
 				std::set<std::string> existing{};
@@ -81,6 +81,6 @@ namespace daw {
 
 				return true;
 			}
-		} // namespace day4
+		} // namespace day04
 	}   // namespace aoc_2017
 } // namespace daw

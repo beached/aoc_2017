@@ -24,11 +24,11 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "day9.h"
+#include "day09.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day9 {
+		namespace day09 {
 			namespace {
 				std::pair<size_t,size_t> count_groups( daw::string_view &input, size_t depth ) {
 					input.remove_prefix( );
@@ -84,7 +84,7 @@ namespace daw {
 				auto result = count_groups( input, 0 );
 				return result.second;
 			}
-		} // namespace day9
+		} // namespace day09
 	}   // namespace aoc_2017
 } // namespace daw
 

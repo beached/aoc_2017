@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define BOOST_TEST_MODULE aoc_2017_day8
+#define BOOST_TEST_MODULE aoc_2017_day08
 #include <daw/boost_test.h>
 
 #include <cstdint>
@@ -29,11 +29,11 @@
 #include <string>
 #include <vector>
 
-#include "day8.h"
+#include "day08.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day8 {
+		namespace day08 {
 			BOOST_AUTO_TEST_CASE( test_001 ) {
 				std::vector<std::string> tst = {"b inc 5 if a > 1", "a inc 1 if b < 5", "c dec -10 if a >= 1",
 				                                "c inc -20 if c == 10"};
@@ -733,7 +733,7 @@ namespace daw {
 				//BOOST_REQUIRE_EQUAL( ans, 1 );
 				std::cout << "answer #2: " << ans.second << " in register " << ans.first << '\n';
 			}
-		} // namespace day8
+		} // namespace day08
 	}   // namespace aoc_2017
 } // namespace daw
 

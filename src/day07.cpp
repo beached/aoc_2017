@@ -31,11 +31,11 @@
 #include <daw/daw_container_algorithm.h>
 #include <daw/daw_string.h>
 
-#include "day7.h"
+#include "day07.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day7 {
+		namespace day07 {
 			namespace {
 				class str_splitter_t {
 					std::string m_str;
@@ -189,6 +189,6 @@ namespace daw {
 				auto orig_weight = get_weight( result.first, root.second );
 				return orig_weight + result.second;
 			}
-		} // namespace day7
+		} // namespace day07
 	}   // namespace aoc_2017
 } // namespace daw

@@ -20,16 +20,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <cstdint>
-#include <cstdlib>
-#include <iostream>
+#pragma once
 
-#include "day6.h"
+#include <cstdint>
+
+#include <daw/daw_span.h>
+#include <daw/daw_string_view.h>
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day6 {
-		}
-	} // namespace aoc_2017
+		namespace day05 {
+			template<typename T>
+			constexpr size_t count_steps( daw::span<T> maze ) noexcept {
+				size_t pos = 0;
+				intmax_t next_pos = 0;
+				size_t count = 0;
+				while( 0 <= next_pos && next_pos < static_cast<intmax_t>( maze.size( ) ) ) {
+					++count;
+					pos = static_cast<size_t>( next_pos );
+					next_pos += static_cast<intmax_t>( maze[pos] );
+					++maze[pos];
+				}
+				return count;
+			}
+
+			template<typename T>
+			constexpr size_t count_steps2( daw::span<T> maze ) noexcept {
+				size_t pos = 0;
+				intmax_t next_pos = 0;
+				size_t count = 0;
+				while( 0 <= next_pos && next_pos < static_cast<intmax_t>( maze.size( ) ) ) {
+					++count;
+					pos = static_cast<size_t>( next_pos );
+					next_pos += static_cast<intmax_t>( maze[pos] );
+					if( maze[pos] >= 3 ) {
+						--maze[pos];
+					} else {
+						++maze[pos];
+					}
+				}
+				return count;
+			}
+
+		} // namespace day05
+	}   // namespace aoc_2017
 } // namespace daw
 

@@ -24,11 +24,12 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "day5.h"
+#include "day06.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day5 {}
+		namespace day06 {
+		}
 	} // namespace aoc_2017
 } // namespace daw
 

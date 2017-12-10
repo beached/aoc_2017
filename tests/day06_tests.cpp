@@ -20,43 +20,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#define BOOST_TEST_MODULE aoc_2017_day06
+#include <daw/boost_test.h>
 
-#include <daw/daw_string_view.h>
+#include <cstdint>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+
+#include "day06.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day1 {
-			namespace impl {
-				struct summer_t {
-					daw::string_view orig;
-					size_t difference;
-					size_t pos;
-
-					constexpr summer_t( daw::string_view str, size_t diff = 1 ) noexcept
-					  : orig{str}
-					  , difference{diff}
-					  , pos{0} {}
-
-					constexpr size_t operator( )( size_t sum, char cur_val ) noexcept {
-						auto other_pos = ( pos + difference ) % orig.size( );
-						auto other = orig[other_pos];
-						if( cur_val == other ) {
-							sum += static_cast<size_t>( cur_val - '0' );
-						}
-						++pos;
-						return std::move( sum );
-					}
-				};
-			} // namespace impl
-
-			constexpr size_t sum_values( daw::string_view str, size_t diff = 1 ) noexcept {
-				impl::summer_t summer{str, diff};
-				return daw::algorithm::accumulate( str.cbegin( ), str.cend( ), static_cast<size_t>( 0 ), summer );
+		namespace day06 {
+			BOOST_AUTO_TEST_CASE( test_001 ) {
+				std::vector<intmax_t> tst = {0, 2, 7, 0};
+				BOOST_REQUIRE_EQUAL( find_loops( make_span( tst ) ), 5 );
 			}
 
-			//constexpr size_t sum_values_p2( daw::string_view str ) noexcept {}
-		} // namespace day1
+			BOOST_AUTO_TEST_CASE( test_002 ) {
+				std::vector<intmax_t> tst = {4, 10, 4, 1, 8, 4, 9, 14, 5, 1, 14, 15, 0, 15, 3, 5};
+				auto const ans1 = find_loops( make_span( tst ) );
+				BOOST_REQUIRE_EQUAL( ans1, 12841 );
+				std::cout << "Answer #1: " << ans1 << '\n';
+			}
+
+			BOOST_AUTO_TEST_CASE( test_p2_001 ) {
+				std::vector<intmax_t> tst = {0, 2, 7, 0};
+				auto spn = make_span( tst );
+				find_loops( spn );
+				BOOST_REQUIRE_EQUAL( find_loops2( spn ), 4 );
+			}
+
+			BOOST_AUTO_TEST_CASE( test_p2_002 ) {
+				std::vector<intmax_t> tst = {4, 10, 4, 1, 8, 4, 9, 14, 5, 1, 14, 15, 0, 15, 3, 5};
+				auto spn = make_span( tst );
+				find_loops( spn );
+				auto ans2 = find_loops2( spn );
+				BOOST_REQUIRE_EQUAL( ans2, 8038 );
+				std::cout << "Answer #2: " << ans2 << '\n';
+			}
+
+
+		} // namespace day06
 	}   // namespace aoc_2017
 } // namespace daw
 

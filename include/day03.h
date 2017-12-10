@@ -45,7 +45,7 @@
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day3 {
+		namespace day03 {
 			constexpr intmax_t dist_from( intmax_t a, intmax_t b ) noexcept {
 				a -= b;
 				if( a < 0 ) {
@@ -82,6 +82,6 @@ namespace daw {
 				std::pair<intmax_t, intmax_t> spiral_length_to_xy( intmax_t len );
 			}
 			intmax_t calc_sum( intmax_t value );
-		} // namespace day3
+		} // namespace day03
 	}   // namespace aoc_2017
 } // namespace daw
