@@ -84,7 +84,7 @@ namespace daw {
 			}
 
 			template<typename Container, typename Lengths>
-			std::string do_hash2( Container &initial_state, Lengths lengths ) {
+			std::string do_hash2( Container &initial_state, Lengths && lengths ) {
 				daw::exception::Assert( initial_state.size( ) == 256, "Initial state must be 256 elements in size" );
 				lengths.insert( lengths.end( ), {17, 31, 73, 47, 23} );
 
