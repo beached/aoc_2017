@@ -30,6 +30,7 @@
 #include <vector>
 
 #include <daw/daw_utility.h>
+#include <daw/daw_natural.h>
 
 namespace daw {
 	namespace aoc_2017 {
@@ -66,7 +67,7 @@ namespace daw {
 			} // namespace impl
 
 			template<typename Container, typename Lengths>
-			constexpr auto do_hash( Container &lst, Lengths const &lengths, size_t rounds = 1 ) noexcept {
+			constexpr auto do_hash( Container &lst, Lengths const &lengths, daw::natural_t<size_t> rounds = 1 ) noexcept {
 				size_t position = 0;
 				size_t skip_size = 0;
 				auto translator = impl::make_translator( lst );
