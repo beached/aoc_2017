@@ -46,21 +46,10 @@ namespace daw {
 				struct translator_t {
 					Container &lst;
 
-					translator_t( Container &c )
+					constexpr translator_t( Container &c ) noexcept
 					  : lst{c} {}
 
 					constexpr auto &operator( )( intmax_t pos ) noexcept {
-						if( pos >= static_cast<intmax_t>( lst.size( ) ) ) {
-							return lst[static_cast<size_t>( pos ) % lst.size( )];
-						} else if( pos < 0 ) {
-							pos *= -1;
-							pos %= static_cast<intmax_t>( lst.size( ) );
-							return lst[( lst.size( ) - 1 ) - static_cast<size_t>( pos )];
-						}
-						return lst[static_cast<size_t>( pos )];
-					}
-
-					constexpr auto const &operator( )( intmax_t pos ) const noexcept {
 						if( pos >= static_cast<intmax_t>( lst.size( ) ) ) {
 							return lst[static_cast<size_t>( pos ) % lst.size( )];
 						} else if( pos < 0 ) {
