@@ -49,30 +49,57 @@ namespace daw {
 						translate( pos + n ) = subset[static_cast<size_t>( n )];
 					}
 				}
+
+				template<typename Trans>
+				void reverse_subset( intmax_t pos, intmax_t length, Trans &translate ) {
+					for( intmax_t n = 0; n < length / 2; ++n ) {
+						using std::swap;
+						swap( translate( pos + n ), translate( ( pos + length - 1 ) - n ) );
+					}
+				}
+
+				template<typename Container>
+				struct translator {
+					Container &lst;
+					translator( Container &c )
+					  : lst{c} {}
+
+					constexpr auto &operator( )( intmax_t pos ) noexcept {
+						if( pos >= static_cast<intmax_t>( lst.size( ) ) ) {
+							return lst[static_cast<size_t>( pos ) % lst.size( )];
+						} else if( pos < 0 ) {
+							pos *= -1;
+							pos %= static_cast<intmax_t>( lst.size( ) );
+							return lst[( lst.size( ) - 1 ) - static_cast<size_t>( pos )];
+						}
+						return lst[static_cast<size_t>( pos )];
+					}
+
+					constexpr auto const &operator( )( intmax_t pos ) const noexcept {
+						if( pos >= static_cast<intmax_t>( lst.size( ) ) ) {
+							return lst[static_cast<size_t>( pos ) % lst.size( )];
+						} else if( pos < 0 ) {
+							pos *= -1;
+							pos %= static_cast<intmax_t>( lst.size( ) );
+							return lst[( lst.size( ) - 1 ) - static_cast<size_t>( pos )];
+						}
+						return lst[static_cast<size_t>( pos )];
+					}
+				};
+
+				template<typename Container>
+				constexpr auto make_translator( Container &c ) noexcept {
+					return translator<Container>{c};
+				}
 			} // namespace impl
 
 			template<typename Container>
-			intmax_t do_hash( Container &lst, std::vector<intmax_t> const &lengths ) {
-				using value_type = std::decay_t<decltype( lst[0] )>;
-				auto const get_at = [&lst]( intmax_t pos ) -> intmax_t & {
-					size_t n;
-					if( pos >= static_cast<intmax_t>( lst.size( ) ) ) {
-						n = static_cast<size_t>( pos ) % lst.size( );
-					} else if( pos < 0 ) {
-						pos *= -1;
-						pos %= static_cast<intmax_t>( lst.size( ) );
-						n = ( lst.size( ) - 1 ) - static_cast<size_t>( pos );
-					} else {
-						n = static_cast<size_t>( pos );
-					}
-					return lst[n];
-				};
+			constexpr intmax_t do_hash( Container &lst, std::vector<intmax_t> const &lengths ) noexcept {
+				auto get_at = impl::make_translator( lst );
 				intmax_t pos = 0;
 				intmax_t skip_sz = 0;
 				for( auto lng : lengths ) {
-					auto cur_subset = impl::make_subset<value_type>( pos, lng, get_at );
-					std::reverse( cur_subset.begin( ), cur_subset.end( ) );
-					impl::copy_to( cur_subset, pos, lng, get_at );
+					impl::reverse_subset( pos, lng, get_at );
 					pos += lng + skip_sz;
 					++skip_sz;
 				}
@@ -84,61 +111,87 @@ namespace daw {
 					if( c < 10 ) {
 						return '0' + c;
 					}
-					return 'a' + (c-10);
+					return 'a' + ( c - 10 );
 				}
+
 				template<typename T>
-				std::string to_hex( T c ) {
-					std::string result{};
-					result += to_nibble( (c & 0xF0) >> 4 );
-					result += to_nibble( c & 0x0F );
+				char *to_hex( T c, char *dst ) {
+					*dst++ = to_nibble( ( c & 0xF0 ) >> 4 );
+					*dst++ = to_nibble( c & 0x0F );
+					return dst;
+				}
+
+				struct ascii_hash {
+					char hash[33];
+
+					constexpr ascii_hash( ) noexcept
+					  : hash{0} {}
+
+					constexpr ascii_hash( ascii_hash const &other ) noexcept
+					  : hash{0} {
+						for( size_t n = 0; n < 33; ++n ) {
+							hash[n] = other.hash[n];
+						}
+					}
+
+					constexpr ascii_hash( ascii_hash &&other ) noexcept
+					  : hash{0} {
+						for( size_t n = 0; n < 33; ++n ) {
+							hash[n] = other.hash[n];
+						}
+					}
+
+					constexpr ascii_hash &operator=( ascii_hash const &rhs ) noexcept {
+						for( size_t n = 0; n < 33; ++n ) {
+							hash[n] = rhs.hash[n];
+						}
+						return *this;
+					}
+
+					constexpr ascii_hash &operator=( ascii_hash &&rhs ) noexcept {
+						for( size_t n = 0; n < 33; ++n ) {
+							hash[n] = rhs.hash[n];
+						}
+						return *this;
+					}
+
+					~ascii_hash( ) noexcept = default;
+
+					operator std::string( ) const {
+						return std::string{hash};
+					}
+				};
+
+				template<typename Container, typename Lengths>
+				constexpr impl::ascii_hash do_hash2( Container &lst, Lengths lengths ) noexcept {
+					auto get_at = impl::make_translator( lst );
+					lengths.insert( lengths.end( ), {17, 31, 73, 47, 23} );
+
+					intmax_t pos = 0;
+					intmax_t skip_sz = 0;
+					for( size_t n = 0; n < 64; ++n ) {
+						for( auto lng : lengths ) {
+							impl::reverse_subset( pos, lng, get_at );
+							pos += lng + skip_sz;
+							++skip_sz;
+						}
+					}
+
+					impl::ascii_hash result{};
+					char *res_ptr = result.hash;
+					for( size_t n = 0; n < 16; ++n ) {
+						auto const first = std::next( lst.begin( ), n * 16 );
+						char const tmp = std::accumulate( first, std::next( first, 16 ), static_cast<char>( 0 ),
+						                                  []( auto lhs, auto rhs ) { return lhs ^ rhs; } );
+						res_ptr = impl::to_hex( tmp, res_ptr );
+					}
 					return result;
 				}
 			} // namespace impl
+
 			template<typename Container>
 			std::string do_hash2( Container &lst, std::string lengths ) {
-				using value_type = std::decay_t<decltype( lst[0] )>;
-				static_assert( daw::is_same_v<value_type, char>, "Must be characters" );
-				lengths.push_back( 17 );
-				lengths.push_back( 31 );
-				lengths.push_back( 73 );
-				lengths.push_back( 47 );
-				lengths.push_back( 23 );
-
-				auto const get_at = [&lst]( intmax_t pos ) -> char & {
-					size_t n;
-					if( pos >= static_cast<intmax_t>( lst.size( ) ) ) {
-						n = static_cast<size_t>( pos ) % lst.size( );
-					} else if( pos < 0 ) {
-						pos *= -1;
-						pos %= static_cast<intmax_t>( lst.size( ) );
-						n = ( lst.size( ) - 1 ) - static_cast<size_t>( pos );
-					} else {
-						n = static_cast<size_t>( pos );
-					}
-					return lst[n];
-				};
-				intmax_t pos = 0;
-				intmax_t skip_sz = 0;
-				for( size_t n = 0; n < 64; ++n ) {
-					for( auto lng : lengths ) {
-						auto cur_subset = impl::make_subset<value_type>( pos, lng, get_at );
-						std::reverse( cur_subset.begin( ), cur_subset.end( ) );
-						impl::copy_to( cur_subset, pos, lng, get_at );
-						pos += lng + skip_sz;
-						++skip_sz;
-					}
-				}
-				std::array<value_type, 16> dense_hash{0};
-				for( size_t n = 0; n < dense_hash.size( ); ++n ) {
-					auto first = std::next( lst.begin( ), n * 16 );
-					dense_hash[n] = std::accumulate( first, std::next( first, 16 ), static_cast<char>( 0 ),
-					                                 []( auto lhs, auto rhs ) { return lhs ^ rhs; } );
-				}
-				std::string result{};
-				for( auto c: dense_hash ) {
-					result += impl::to_hex( c );
-				}
-				return result;
+				return impl::do_hash2( lst, std::move( lengths ) );
 			}
 		} // namespace day10
 	}   // namespace aoc_2017
