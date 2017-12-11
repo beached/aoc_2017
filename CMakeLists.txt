@@ -118,3 +118,8 @@ target_link_libraries( aoc_2017_day10_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${
 add_dependencies( aoc_2017_day10_bin header_libraries_prj )
 add_test( aoc_2017_day10_test aoc_2017_day10_bin )
 
+add_executable( aoc_2017_day11_bin ${HEADER_FOLDER}/day11.h ${SOURCE_FOLDER}/day11.cpp ${TEST_FOLDER}/day11_tests.cpp )
+target_link_libraries( aoc_2017_day11_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
+add_dependencies( aoc_2017_day11_bin header_libraries_prj )
+add_test( aoc_2017_day11_test aoc_2017_day11_bin )
+
