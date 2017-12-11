@@ -263,7 +263,7 @@ namespace daw {
 				  "s,se,se,s,se,se,se,se";
 				auto ans = calc_dist( daw::string_view{tst.data( ), tst.size( )} );
 				BOOST_REQUIRE_EQUAL( ans.final, 707 );
-				//BOOST_REQUIRE_EQUAL( ans.furthest, 707 );
+				BOOST_REQUIRE_EQUAL( ans.furthest, 1490 );
 				std::cout << "Answer #1: " << ans.final << '\n';
 				std::cout << "Answer #2: " << ans.furthest << '\n';
 			}
