@@ -24,6 +24,7 @@
 
 #include <cmath>
 #include <daw/daw_string_view.h>
+#include <daw/daw_math.h>
 
 namespace daw {
 	namespace aoc_2017 {
@@ -42,10 +43,7 @@ namespace daw {
 				}
 
 				constexpr intmax_t calc_hex_dist( intmax_t x, intmax_t y ) noexcept {
-					if( abs( x ) > abs( y ) ) {
-						return abs( x - y );
-					}
-					return abs( y - x );
+					return daw::math::vmax( abs( x - y ), abs( y - x ), abs( x ), abs( y ) );
 				}
 			} // namespace impl
 
