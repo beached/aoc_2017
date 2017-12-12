@@ -86,15 +86,15 @@ namespace daw {
 			} // namespace
 
 			intmax_t count_connections_to_zero( std::vector<std::string> lines ) {
-				auto nodes = parse_input( lines );
-				return static_cast<intmax_t>( get_group( nodes, "0" ).size( ) );
+				auto graph = parse_input( lines );
+				return static_cast<intmax_t>( get_group( graph, "0" ).size( ) );
 			}
 
 			intmax_t num_groups( std::vector<std::string> lines ) {
-				auto nodes = parse_input( lines );
+				auto graph = parse_input( lines );
 				std::set<node_t> groups{};
-				for( auto const &n : nodes ) {
-					groups.insert( get_group( nodes, n.first ) );
+				for( auto const &node : graph ) {
+					groups.insert( get_group( graph, node.first ) );
 				}
 				return static_cast<intmax_t>( groups.size( ) );
 			}
