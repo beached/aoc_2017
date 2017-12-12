@@ -2045,7 +2045,7 @@ namespace daw {
 				auto ans1 = count_connections_to_zero( tst );
 				auto ans2 = num_groups( tst );
 				BOOST_REQUIRE_EQUAL( ans1, 152 );
-				//BOOST_REQUIRE_EQUAL( ans2, );
+				BOOST_REQUIRE_EQUAL( ans2, 186 );
 				std::cout << "Answer #1: " << ans1 << '\n';
 				std::cout << "Answer #2: " << ans2 << '\n';
 			}

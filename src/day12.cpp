@@ -39,9 +39,11 @@
 namespace daw {
 	namespace aoc_2017 {
 		namespace day12 {
+			using node_t = std::set<std::string>;
+			using graph_t = std::map<std::string, node_t>;
 			namespace {
-				std::pair<std::string, std::set<std::string>> parse_line( daw::string_view line ) {
-					std::pair<std::string, std::set<std::string>> result{};
+				std::pair<std::string, node_t> parse_line( daw::string_view line ) {
+					std::pair<std::string, node_t> result{};
 
 					result.first = daw::string::trim_copy( line.substr( 0, line.find( ' ' ) ).to_string( ) );
 					line.remove_prefix( line.find( '>' ) + 1 );
@@ -52,8 +54,7 @@ namespace daw {
 					return result;
 				}
 
-				std::set<std::string> get_group( std::map<std::string, std::set<std::string>> const &nodes,
-				                                 daw::string_view cur_node ) {
+				node_t get_group( graph_t const &nodes, daw::string_view cur_node ) {
 					std::set<std::string> visited{};
 					std::vector<std::string> to_visit{};
 					to_visit.push_back( cur_node.to_string( ) );
@@ -70,16 +71,16 @@ namespace daw {
 					return visited;
 				}
 
-				std::map<std::string, std::set<std::string>> parse_input( std::vector<std::string> lines ) {
-					std::map<std::string, std::set<std::string>> nodes{};
+				graph_t parse_input( std::vector<std::string> lines ) {
+					graph_t graph{};
 					for( auto const &line : lines ) {
 						auto tmp = parse_line( line );
-						nodes[tmp.first].insert( tmp.second.begin( ), tmp.second.end( ) );
+						graph[tmp.first].insert( tmp.second.begin( ), tmp.second.end( ) );
 						for( auto const &node : tmp.second ) {
-							nodes[node].insert( tmp.first );
+							graph[node].insert( tmp.first );
 						}
 					}
-					return nodes;
+					return graph;
 				}
 			} // namespace
 
@@ -90,7 +91,7 @@ namespace daw {
 
 			intmax_t num_groups( std::vector<std::string> lines ) {
 				auto nodes = parse_input( lines );
-				std::set<std::set<std::string>> groups{};
+				std::set<node_t> groups{};
 				for( auto const &n : nodes ) {
 					groups.insert( get_group( nodes, n.first ) );
 				}
