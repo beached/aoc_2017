@@ -54,10 +54,10 @@ namespace daw {
 					return result;
 				}
 
-				node_t get_group( graph_t const &nodes, daw::string_view cur_node ) {
+				node_t get_group( graph_t const &nodes, std::string cur_node ) {
 					std::set<std::string> visited{};
 					std::vector<std::string> to_visit{};
-					to_visit.push_back( cur_node.to_string( ) );
+					to_visit.push_back( cur_node );
 					while( !to_visit.empty( ) ) {
 						auto tmp = to_visit.back( );
 						to_visit.pop_back( );
