@@ -55,7 +55,7 @@ namespace daw {
 				}
 
 				node_t get_group( graph_t const &nodes, std::string cur_node ) {
-					std::set<std::string> visited{};
+					node_t visited{};
 					std::vector<std::string> to_visit{};
 					to_visit.push_back( cur_node );
 					while( !to_visit.empty( ) ) {
