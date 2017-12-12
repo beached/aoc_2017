@@ -39,11 +39,12 @@
 namespace daw {
 	namespace aoc_2017 {
 		namespace day12 {
-			using node_t = std::set<std::string>;
-			using graph_t = std::map<std::string, node_t>;
+			using node_name_t = std::string;
+			using node_t = std::set<node_name_t>;
+			using graph_t = std::map<node_name_t, node_t>;
 			namespace {
-				std::pair<std::string, node_t> parse_line( daw::string_view line ) {
-					std::pair<std::string, node_t> result{};
+				std::pair<node_name_t, node_t> parse_line( daw::string_view line ) {
+					std::pair<node_name_t, node_t> result{};
 
 					result.first = daw::string::trim_copy( line.substr( 0, line.find( ' ' ) ).to_string( ) );
 					line.remove_prefix( line.find( '>' ) + 1 );
@@ -54,9 +55,9 @@ namespace daw {
 					return result;
 				}
 
-				node_t get_group( graph_t const &nodes, std::string cur_node ) {
-					node_t visited{};
-					std::vector<std::string> to_visit{};
+				std::set<node_name_t> get_group( graph_t const &nodes, std::string cur_node ) {
+					std::set<node_name_t> visited{};
+					std::vector<node_name_t> to_visit{};
 					to_visit.push_back( cur_node );
 					while( !to_visit.empty( ) ) {
 						auto tmp = to_visit.back( );
