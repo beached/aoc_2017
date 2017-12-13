@@ -72,6 +72,7 @@ namespace daw {
 					return result;
 				}
 
+				//*********************************************
 				intmax_t simulate( firewall_t firewall ) {
 					return std::accumulate( firewall.cbegin( ), firewall.cend( ), static_cast<intmax_t>( 0 ),
 					                        []( auto res, layer_t const &l ) { return res + l.cost( 0 ); } );
