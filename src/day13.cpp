@@ -74,7 +74,6 @@ namespace daw {
 					firewall_t result{};
 					std::transform( lines.cbegin( ), lines.cend( ), std::back_inserter( result ),
 					                []( std::string const &str ) { return parse_line( str ); } );
-
 					daw::container::sort( result, []( auto const &lhs, auto const &rhs ) { return lhs.depth < rhs.depth; } );
 					return result;
 				}
