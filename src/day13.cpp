@@ -32,6 +32,7 @@
 #include <daw/daw_parser_addons.h>
 
 #include "day13.h"
+#define CONSTEXPR
 
 namespace daw {
 	namespace aoc_2017 {
@@ -40,33 +41,27 @@ namespace daw {
 				struct layer_t {
 					intmax_t depth;
 					intmax_t range;
-					intmax_t position;
-					enum class direction_t { up, down };
 
-					constexpr void tick( intmax_t steps ) noexcept {
-						position = (position + steps) % range;
+					CONSTEXPR intmax_t pos( intmax_t t ) const noexcept {
+						return ( t + depth ) % range;
 					}
 
-					constexpr intmax_t cost( ) const noexcept {
-						return depth * ( ( range / 2 ) + 1 );
+					CONSTEXPR intmax_t cost( intmax_t t ) const noexcept {
+						intmax_t result = pos(t) == 0 ? 1 : 0;
+						result *= depth * ((range/2) + 1);
+						return result;
 					}
 				};
 				using firewall_t = std::vector<layer_t>;
 
-				void tick( firewall_t &firewall, intmax_t steps ) noexcept {
-					for( auto &layer : firewall ) {
-						layer.tick( steps );
-					}
-				}
-
-				constexpr layer_t parse_line( daw::string_view line ) {
-					layer_t layer{0, 0, 0 };
+				CONSTEXPR layer_t parse_line( daw::string_view line ) {
+					layer_t layer{0, 0};
 					auto pos = line.find( ':' );
 					auto depth_str = line.substr( 0, pos );
 					line.remove_prefix( pos + 2 );
 					daw::parser::parse_unsigned_int( depth_str.cbegin( ), depth_str.cend( ), layer.depth );
 					daw::parser::parse_unsigned_int( line.cbegin( ), line.cend( ), layer.range );
-					layer.range = ( layer.range - 1 ) * 2;
+					layer.range = layer.range == 0 ? 0 : ( layer.range - 1 ) * 2;
 					return layer;
 				}
 
@@ -78,28 +73,20 @@ namespace daw {
 					return result;
 				}
 
-				intmax_t simulate( firewall_t firewall, bool can_cost = false, intmax_t delay = 0 ) {
-					size_t pos = 0;
-					intmax_t cost = 0;
-					tick( firewall, delay );
-					while( pos < firewall.size( ) ) {
-						if( firewall[pos].position == 0 ) {
-							if( can_cost ) {
-								return 1;
-							}
-							cost += firewall[pos].cost( );
-						}
-						++pos;
-						if( pos < firewall.size( ) ) {
-							tick( firewall, firewall[pos].depth - firewall[pos - 1].depth );
-						}
+				intmax_t simulate( firewall_t firewall, bool find_free = false, intmax_t delay = 0 ) {
+					if( find_free ) {
+						auto res = std::find_if( firewall.cbegin( ), firewall.cend( ),
+						                         [delay]( layer_t const &l ) { return l.pos( delay ) == 0; } );
+
+						return res == firewall.cend( ) ? 0 : 1;
 					}
-					return cost;
+					return std::accumulate( firewall.cbegin( ), firewall.cend( ), static_cast<intmax_t>( 0 ),
+					                        [delay]( auto res, layer_t const &l ) { return res + l.cost( delay ); } );
 				}
 
 				intmax_t calc_delay( firewall_t firewall ) {
-					intmax_t result = 0;
-					while( simulate( firewall, true, result ) > 0 ) {
+					intmax_t result = 1;
+					while( simulate( firewall, true, result ) != 0 ) {
 						++result;
 					}
 					return result;
