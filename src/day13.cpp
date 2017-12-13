@@ -32,7 +32,6 @@
 #include <daw/daw_parser_addons.h>
 
 #include "day13.h"
-#define CONSTEXPR
 
 namespace daw {
 	namespace aoc_2017 {
@@ -42,11 +41,11 @@ namespace daw {
 					intmax_t depth;
 					intmax_t range;
 
-					CONSTEXPR intmax_t pos( intmax_t t ) const noexcept {
+					constexpr intmax_t pos( intmax_t t ) const noexcept {
 						return ( t + depth ) % range;
 					}
 
-					CONSTEXPR intmax_t cost( intmax_t t ) const noexcept {
+					constexpr intmax_t cost( intmax_t t ) const noexcept {
 						intmax_t result = pos( t ) == 0 ? 1 : 0;
 						result *= depth * ( ( range / 2 ) + 1 );
 						return result;
@@ -54,7 +53,7 @@ namespace daw {
 				};
 				using firewall_t = std::vector<layer_t>;
 
-				CONSTEXPR layer_t parse_line( daw::string_view line ) {
+				constexpr layer_t parse_line( daw::string_view line ) {
 					layer_t layer{0, 0};
 					auto pos = line.find( ':' );
 					auto depth_str = line.substr( 0, pos );
@@ -90,12 +89,12 @@ namespace daw {
 
 			intmax_t severity( std::vector<std::string> const &lines ) {
 				auto firewall = parse_input( lines );
-				return simulate( firewall );
+				return simulate( std::move( firewall ) );
 			}
 
 			intmax_t min_cost( std::vector<std::string> const &lines ) {
 				auto firewall = parse_input( lines );
-				return calc_delay( firewall );
+				return calc_delay( std::move( firewall ) );
 			}
 		} // namespace day13
 	}   // namespace aoc_2017
