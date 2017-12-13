@@ -27,6 +27,7 @@
 namespace daw {
 	namespace aoc_2017 {
 		namespace dayN {
+
 		} // namespace dayN
 	}   // namespace aoc_2017
 } // namespace daw
