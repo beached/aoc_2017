@@ -47,8 +47,8 @@ namespace daw {
 					}
 
 					CONSTEXPR intmax_t cost( intmax_t t ) const noexcept {
-						intmax_t result = pos(t) == 0 ? 1 : 0;
-						result *= depth * ((range/2) + 1);
+						intmax_t result = pos( t ) == 0 ? 1 : 0;
+						result *= depth * ( ( range / 2 ) + 1 );
 						return result;
 					}
 				};
@@ -73,23 +73,18 @@ namespace daw {
 					return result;
 				}
 
-				intmax_t simulate( firewall_t firewall, bool find_free = false, intmax_t delay = 0 ) {
-					if( find_free ) {
-						auto res = std::find_if( firewall.cbegin( ), firewall.cend( ),
-						                         [delay]( layer_t const &l ) { return l.pos( delay ) == 0; } );
-
-						return res == firewall.cend( ) ? 0 : 1;
-					}
+				intmax_t simulate( firewall_t firewall ) {
 					return std::accumulate( firewall.cbegin( ), firewall.cend( ), static_cast<intmax_t>( 0 ),
-					                        [delay]( auto res, layer_t const &l ) { return res + l.cost( delay ); } );
+					                        []( auto res, layer_t const &l ) { return res + l.cost( 0 ); } );
 				}
 
 				intmax_t calc_delay( firewall_t firewall ) {
-					intmax_t result = 1;
-					while( simulate( firewall, true, result ) != 0 ) {
-						++result;
+					intmax_t delay = 1;
+					while( std::find_if( firewall.cbegin( ), firewall.cend( ),
+					                     [delay]( layer_t const &l ) { return l.pos( delay ) == 0; } ) != firewall.cend( ) ) {
+						++delay;
 					}
-					return result;
+					return delay;
 				}
 			} // namespace
 
