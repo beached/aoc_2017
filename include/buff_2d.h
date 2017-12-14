@@ -33,7 +33,7 @@ namespace daw {
 	template<typename SizePtrT, typename... Positions>
 	constexpr intmax_t project_impl( daw::array_view<SizePtrT> dimensions, Positions... positions ) noexcept {
 		if( !dimensions.empty( ) ) {
-			return 
+			//return
 		}
 		return 0;
 	}
@@ -58,7 +58,7 @@ namespace daw {
 		~projection( ) = default;
 
 		template<intmax_t... Position>
-		dectype( auto ) operator( )( Position... pos ) {
+		auto operator( )( Position... pos ) {
 			daw::exception::daw_throw_on_false( sizeof...( Position ) == m_dimensions.size( ), "Invalid position" );
 		}
 	};

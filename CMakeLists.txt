@@ -45,7 +45,7 @@ set( TEST_FOLDER "tests" )
 include_directories( ${HEADER_FOLDER} )
 
 set( HEADER_FILES
-	${HEADER_FOLDER}/buff_2d.h
+	#	${HEADER_FOLDER}/buff_2d.h
 	${HEADER_FOLDER}/day01.h
 	${HEADER_FOLDER}/day02.h
 	${HEADER_FOLDER}/day03.h
@@ -132,4 +132,9 @@ add_executable( aoc_2017_day13_bin ${HEADER_FOLDER}/day13.h ${SOURCE_FOLDER}/day
 target_link_libraries( aoc_2017_day13_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
 add_dependencies( aoc_2017_day13_bin header_libraries_prj )
 add_test( aoc_2017_day13_test aoc_2017_day13_bin )
+
+add_executable( aoc_2017_day14_bin ${HEADER_FOLDER}/day14.h ${SOURCE_FOLDER}/day14.cpp ${TEST_FOLDER}/day14_tests.cpp )
+target_link_libraries( aoc_2017_day14_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
+add_dependencies( aoc_2017_day14_bin header_libraries_prj )
+add_test( aoc_2017_day14_test aoc_2017_day14_bin )
 
