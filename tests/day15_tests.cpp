@@ -44,8 +44,8 @@ namespace daw {
 			}
 
 			BOOST_AUTO_TEST_CASE( test_003 ) {
-				uint64_t init_a = 703;
-				uint64_t init_b = 516;
+				value_t init_a = 703;
+				value_t init_b = 516;
 				auto ans1 = count_matches( init_a, init_b, 40'000'000 );
 				BOOST_REQUIRE_EQUAL( ans1, 594 );
 				std::cout << "Answer #1: " << ans1 << '\n';

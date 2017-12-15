@@ -27,7 +27,8 @@
 namespace daw {
 	namespace aoc_2017 {
 		namespace day15 {
-			uint64_t count_matches( uint64_t init_a, uint64_t init_b, uint64_t count, uint64_t mult_of_a = 1, uint64_t mult_of_b = 1 ) noexcept;
+			using value_t = uint64_t;
+			value_t count_matches( value_t init_a, value_t init_b, value_t count, value_t mult_of_a = 1, value_t mult_of_b = 1 ) noexcept;
 		} // namespace day15
 	}   // namespace aoc_2017
 } // namespace daw

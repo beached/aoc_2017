@@ -30,15 +30,15 @@ namespace daw {
 	namespace aoc_2017 {
 		namespace day15 {
 			struct gen_t {
-				uint64_t cur_value;
-				uint64_t factor;
-				uint64_t mult_of;
-				constexpr gen_t( uint64_t init_value, uint64_t fact, uint64_t mult = 1 ) noexcept
+				value_t cur_value;
+				value_t factor;
+				value_t mult_of;
+				constexpr gen_t( value_t init_value, value_t fact, value_t mult = 1 ) noexcept
 				  : cur_value{init_value}
 				  , factor{fact}
 				  , mult_of{mult} {}
 
-				constexpr uint64_t operator( )( ) noexcept {
+				constexpr value_t operator( )( ) noexcept {
 					do {
 						cur_value = ( cur_value * factor ) % 2147483647;
 					} while( ( cur_value % mult_of ) != 0 );
@@ -46,16 +46,16 @@ namespace daw {
 				}
 			};
 
-			uint64_t count_matches( uint64_t init_a, uint64_t init_b, uint64_t count, uint64_t mult_of_a,
-			                        uint64_t mult_of_b ) noexcept {
-				uint64_t matches = 0;
+			value_t count_matches( value_t init_a, value_t init_b, value_t count, value_t mult_of_a,
+			                        value_t mult_of_b ) noexcept {
+				value_t matches = 0;
 				gen_t a{init_a, 16807, mult_of_a};
 				gen_t b{init_b, 48271, mult_of_b};
 
-				constexpr uint64_t mask = 0x0000'0000'0000'FFFF;
-				for( uint64_t n = 0; n < count; ++n ) {
-					uint64_t val_a = a( );
-					uint64_t val_b = b( );
+				constexpr value_t mask = 0x0000'0000'0000'FFFF;
+				for( value_t n = 0; n < count; ++n ) {
+					value_t val_a = a( );
+					value_t val_b = b( );
 
 					val_a &= mask;
 					val_b &= mask;
