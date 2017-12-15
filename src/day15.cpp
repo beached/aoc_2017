@@ -28,45 +28,6 @@
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day15 {
-			struct gen_t {
-				value_t cur_value;
-				value_t factor;
-				value_t mult_of;
-				constexpr gen_t( value_t init_value, value_t fact, value_t mult = 1 ) noexcept
-				  : cur_value{init_value}
-				  , factor{fact}
-				  , mult_of{mult} {}
-
-				constexpr value_t operator( )( ) noexcept {
-					do {
-						cur_value = ( cur_value * factor ) % 2147483647;
-					} while( ( cur_value % mult_of ) != 0 );
-					return cur_value;
-				}
-			};
-
-			value_t count_matches( value_t init_a, value_t init_b, value_t count, value_t mult_of_a,
-			                        value_t mult_of_b ) noexcept {
-				value_t matches = 0;
-				gen_t a{init_a, 16807, mult_of_a};
-				gen_t b{init_b, 48271, mult_of_b};
-
-				constexpr value_t mask = 0x0000'0000'0000'FFFF;
-				for( value_t n = 0; n < count; ++n ) {
-					value_t val_a = a( );
-					value_t val_b = b( );
-
-					val_a &= mask;
-					val_b &= mask;
-
-					if( val_a == val_b ) {
-						++matches;
-					}
-				}
-				return matches;
-			}
-
-		} // namespace day15
+		namespace day15 {} // namespace day15
 	}   // namespace aoc_2017
 } // namespace daw
