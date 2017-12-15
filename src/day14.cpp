@@ -24,6 +24,7 @@
 #include <bitset>
 #include <cstdint>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -115,8 +116,9 @@ namespace daw {
 					return result;
 				}
 
-				void fill_region( grid_t & grid, intmax_t row, intmax_t column ) {
-					if( row < 0 || row >= 128 || column < 0 || column >= 128 ) {
+				template<typename Grid>
+				constexpr void fill_region( Grid & grid, intmax_t row, intmax_t column ) noexcept {
+					if( static_cast<size_t>( row ) >= 128 || static_cast<size_t>( column ) >= 128 ) {
 						return;
 					}
 					if( grid[row][column] != '1' ) {
@@ -129,12 +131,39 @@ namespace daw {
 					fill_region( grid, row, column+1 );
 				}
 
-				size_t find_region( grid_t & grid, size_t row ) {
-					size_t count = 0;
+				template<typename Number>
+				std::string padded_string( Number n, size_t pad_to ) {
+					pad_to -= static_cast<size_t>( log10( n ) ) + 1;
+					std::string result(pad_to, '0');
+					using std::to_string;
+					result += to_string( n );
+					return result;
+				}
+
+				void grid_to_xpm( grid_t const & grid, size_t count ) {
+					std::string const fname = "./grid_" + padded_string( count, 4 ) + ".xpm";
+					std::ofstream fs{ fname.c_str( ) };
+					if( !fs ) {
+						std::cerr << "could not write to " << fname << '\n';
+						return;
+					}
+					fs << "! XPM2\n";
+					fs << "128 128 3 1\n";
+					fs << "0 c #000000\n";
+					fs << "1 c #FF0000\n";
+					fs << "F c #00FF00\n";
+					for( auto const & row: grid ) {
+						fs.write( row.data( ), row.size( ) );
+						fs << '\n';
+					}
+				}
+
+				size_t find_region( grid_t & grid, size_t row, size_t count ) noexcept {
 					for( size_t n=0; n<grid[row].size( ); ++n ) {
 						if( grid[row][n] == '1' ) {
 							fill_region( grid, static_cast<intmax_t>( row ), static_cast<intmax_t>( n ) );
 							++count;
+							grid_to_xpm( grid, count );
 						}
 					}
 					return count;
@@ -153,7 +182,7 @@ namespace daw {
 				auto grid = get_map( str );
 				size_t count = 0;
 				for( size_t n=0; n<128; ++n ) {
-					count += find_region( grid, n );
+					count = find_region( grid, n, count );
 				}
 				return count;
 			}

@@ -20,35 +20,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define BOOST_TEST_MODULE aoc_2017_day14
+#define BOOST_TEST_MODULE aoc_2017_day15
 #include <daw/boost_test.h>
 
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
 
-#include "day14.h"
+#include "day15.h"
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day14 {
+		namespace day15 {
+
 			BOOST_AUTO_TEST_CASE( test_001 ) {
-				std::string tst = "flqrgnkx";
-				auto ans1 = count_used( tst );
-				BOOST_REQUIRE_EQUAL( ans1, 8108 );
+				auto ans = count_matches( 65, 8921, 40'000'000 );
+				BOOST_REQUIRE_EQUAL( ans, 588 );
 			}
 
 			BOOST_AUTO_TEST_CASE( test_002 ) {
-				std::string tst = "hxtvlmkl";
-				auto ans1 = count_used( tst );
-				std::cout << "Answer #1: " << ans1 << '\n';
-				auto ans2 = count_regions( tst );
-				std::cout << "Answer #2: " << ans2 << '\n';
-				BOOST_REQUIRE_EQUAL( ans1, 8214 );
-				BOOST_REQUIRE_EQUAL( ans2, 1093 );
+				auto ans = count_matches( 65, 8921, 5'000'000, 4, 8 );
+				BOOST_REQUIRE_EQUAL( ans, 309 );
 			}
 
-		} // namespace day14
+			BOOST_AUTO_TEST_CASE( test_003 ) {
+				uint64_t init_a = 703;
+				uint64_t init_b = 516;
+				auto ans1 = count_matches( init_a, init_b, 40'000'000 );
+				BOOST_REQUIRE_EQUAL( ans1, 594 );
+				std::cout << "Answer #1: " << ans1 << '\n';
+
+				auto ans2 = count_matches( init_a, init_b, 5'000'000, 4, 8 );
+				//BOOST_REQUIRE_EQUAL( ans2,  );
+				std::cout << "Answer #2: " << ans2 << '\n';
+			}
+		} // namespace day15
 	}   // namespace aoc_2017
 } // namespace daw
-

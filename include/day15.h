@@ -20,35 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define BOOST_TEST_MODULE aoc_2017_day14
-#include <daw/boost_test.h>
+#pragma once
 
-#include <cstdint>
-#include <cstdlib>
-#include <iostream>
-
-#include "day14.h"
+#include <daw/daw_string_view.h>
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace day14 {
-			BOOST_AUTO_TEST_CASE( test_001 ) {
-				std::string tst = "flqrgnkx";
-				auto ans1 = count_used( tst );
-				BOOST_REQUIRE_EQUAL( ans1, 8108 );
-			}
-
-			BOOST_AUTO_TEST_CASE( test_002 ) {
-				std::string tst = "hxtvlmkl";
-				auto ans1 = count_used( tst );
-				std::cout << "Answer #1: " << ans1 << '\n';
-				auto ans2 = count_regions( tst );
-				std::cout << "Answer #2: " << ans2 << '\n';
-				BOOST_REQUIRE_EQUAL( ans1, 8214 );
-				BOOST_REQUIRE_EQUAL( ans2, 1093 );
-			}
-
-		} // namespace day14
+		namespace day15 {
+			uint64_t count_matches( uint64_t init_a, uint64_t init_b, uint64_t count, uint64_t mult_of_a = 1, uint64_t mult_of_b = 1 ) noexcept;
+		} // namespace day15
 	}   // namespace aoc_2017
 } // namespace daw
 
