@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <daw/daw_algorithm.h>
+#include <daw/daw_math.h>
 
 /*
  *

@@ -39,7 +39,7 @@ namespace daw {
 					size_t num_moves = 0;
 					daw::parser::parse_unsigned_int( sv.begin( ), sv.begin( ) + pos, num_moves );
 					daw::algorithm::rotate(
-					  dancers.rbegin( ), daw::algorithm::next( dancers.rbegin( ), num_moves % dancers.size( ) ), dancers.rend( ) );
+					  dancers.rbegin( ), daw::next( dancers.rbegin( ), num_moves % dancers.size( ) ), dancers.rend( ) );
 					sv.remove_prefix( pos );
 					sv.remove_prefix( );
 				}

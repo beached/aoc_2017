@@ -43,7 +43,7 @@ namespace daw {
 				}
 
 				constexpr intmax_t calc_hex_dist( intmax_t x, intmax_t y ) noexcept {
-					return daw::math::vmax( abs( x - y ), abs( y - x ), abs( x ), abs( y ) );
+					return daw::max( abs( x - y ), abs( y - x ), abs( x ), abs( y ) );
 				}
 			} // namespace impl
 
