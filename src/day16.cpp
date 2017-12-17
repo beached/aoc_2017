@@ -34,46 +34,36 @@ namespace daw {
 		namespace day16 {
 			namespace {
 				void process_spin( daw::string_view &sv, std::string &dancers ) noexcept {
-					sv.remove_prefix( );
-					auto pos = sv.find_first_of( ',' );
+					auto num_moves_str = sv.chop( "," );
 					size_t num_moves = 0;
-					daw::parser::parse_unsigned_int( sv.begin( ), sv.begin( ) + pos, num_moves );
+					daw::parser::parse_unsigned_int( num_moves_str.cbegin( ), num_moves_str.cend( ), num_moves );
+
 					daw::algorithm::rotate(
 					  dancers.rbegin( ), daw::next( dancers.rbegin( ), num_moves % dancers.size( ) ), dancers.rend( ) );
-					sv.remove_prefix( pos );
-					sv.remove_prefix( );
 				}
 
 				void process_exchange( daw::string_view &sv, std::string &dancers ) noexcept {
-					sv.remove_prefix( );
-					auto pos = sv.find( '/' );
+					auto tmp = sv.chop( "/" );
 					size_t pos1 = 0;
-					daw::parser::parse_unsigned_int( sv.begin( ), sv.begin( ) + pos, pos1 );
-					sv.remove_prefix( pos + 1 );
-					pos = sv.find( ',' );
-					if( pos > sv.size( ) ) {
-						pos = sv.size( );
-					}
+					daw::parser::parse_unsigned_int( tmp.cbegin( ), tmp.cend( ), pos1 );
+					tmp = sv.chop( "," );
 					size_t pos2 = 0;
-					daw::parser::parse_unsigned_int( sv.begin( ), sv.begin( ) + pos, pos2 );
+					daw::parser::parse_unsigned_int( tmp.cbegin( ), tmp.cend( ), pos2 );
 					std::swap( dancers[pos1], dancers[pos2] );
-					sv.remove_prefix( pos );
-					sv.remove_prefix( );
 				}
 
 				void process_partner( daw::string_view &sv, std::string &dancers ) noexcept {
+					auto pos1 = dancers.find( sv.pop_front( ) );
 					sv.remove_prefix( );
-					auto pos1 = dancers.find( sv.front( ) );
-					sv.remove_prefix( 2 );
-					auto pos2 = dancers.find( sv.front( ) );
+					auto pos2 = dancers.find( sv.pop_front( ) );
 					std::swap( dancers[pos1], dancers[pos2] );
-					sv.remove_prefix( 2 );
+					sv.remove_prefix( );
 				}
 			} // namespace
 
 			std::string go_dancing( std::string dancers, daw::string_view dance_moves ) {
 				while( !dance_moves.empty( ) ) {
-					switch( dance_moves.front( ) ) {
+					switch( dance_moves.pop_front( ) ) {
 					case 's':
 						process_spin( dance_moves, dancers );
 						break;
