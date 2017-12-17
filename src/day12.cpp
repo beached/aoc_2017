@@ -46,11 +46,10 @@ namespace daw {
 				std::pair<node_name_t, node_t> parse_line( daw::string_view line ) {
 					std::pair<node_name_t, node_t> result{};
 
-					result.first = daw::string::trim_copy( line.substr( 0, line.find( ' ' ) ).to_string( ) );
-					line.remove_prefix( line.find( '>' ) + 1 );
-					str_splitter splt{daw::string::trim_copy( line.to_string( ) ), ","};
-					while( splt ) {
-						result.second.insert( daw::string::trim_copy( splt( ) ) );
+					result.first = line.pop_front( " " ).to_string( );
+					line.pop_front( "> " );
+					while( !line.empty( ) ) {
+						result.second.insert( line.pop_front( ", " ).to_string( ) );
 					}
 					return result;
 				}
