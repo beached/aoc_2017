@@ -25,7 +25,7 @@
 #include <iostream>
 
 #include <daw/daw_algorithm.h>
-#include <daw/daw_parser_addons.h>
+#include <daw/daw_parser_helper_sv.h>
 
 #include "day16.h"
 
@@ -34,21 +34,15 @@ namespace daw {
 		namespace day16 {
 			namespace {
 				void process_spin( daw::string_view &sv, std::string &dancers ) noexcept {
-					auto num_moves_str = sv.chop( "," );
-					size_t num_moves = 0;
-					daw::parser::parse_unsigned_int( num_moves_str.cbegin( ), num_moves_str.cend( ), num_moves );
+					auto const num_moves = daw::parser::parse_unsigned_int<size_t>( sv.chop( "," ) );
 
 					daw::algorithm::rotate(
 					  dancers.rbegin( ), daw::next( dancers.rbegin( ), num_moves % dancers.size( ) ), dancers.rend( ) );
 				}
 
 				void process_exchange( daw::string_view &sv, std::string &dancers ) noexcept {
-					auto tmp = sv.chop( "/" );
-					size_t pos1 = 0;
-					daw::parser::parse_unsigned_int( tmp.cbegin( ), tmp.cend( ), pos1 );
-					tmp = sv.chop( "," );
-					size_t pos2 = 0;
-					daw::parser::parse_unsigned_int( tmp.cbegin( ), tmp.cend( ), pos2 );
+					auto const pos1 = daw::parser::parse_unsigned_int<size_t>( sv.chop( "/" ) );
+					auto const pos2 = daw::parser::parse_unsigned_int<size_t>( sv.chop( "," ) );
 					std::swap( dancers[pos1], dancers[pos2] );
 				}
 
