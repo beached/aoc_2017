@@ -61,9 +61,7 @@ namespace daw {
 				} result{0, 0};
 				impl::point p{0, 0};
 				while( !moves.empty( ) ) {
-					auto cur_move = moves.substr( 0, moves.find( "," ) );
-					moves.remove_prefix( cur_move.size( ) );
-					moves.remove_prefix( );
+					auto const cur_move = moves.pop_front( "," );
 					if( cur_move == "n" ) {
 						++p.y;
 					} else if( cur_move == "ne" ) {

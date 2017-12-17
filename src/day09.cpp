@@ -31,14 +31,13 @@ namespace daw {
 		namespace day09 {
 			namespace {
 				std::pair<size_t,size_t> count_groups( daw::string_view &input, size_t depth ) {
-					input.remove_prefix( );
 					size_t grp_count = 1;
 					size_t grb_count = 0;
 					bool in_garbage = false;
 					bool skipped = false;
 					while( !input.empty( ) ) {
 						skipped = false;
-						switch( input.front( ) ) {
+						switch( input.pop_front( ) ) {
 						case '{':
 							if( !in_garbage ) {
 								auto tmp = count_groups( input, depth + 1 );
@@ -69,18 +68,19 @@ namespace daw {
 						if( !skipped && in_garbage ) {
 							++grb_count;
 						}
-						input.remove_prefix( );
 					}
 					throw std::runtime_error( "Unexpected state" );
 				}
 			} // namespace
 
 			size_t count_groups( daw::string_view input ) {
+				input.remove_prefix( );
 				auto result = count_groups( input, 0 );
 				return result.first;
 			}
 
 			size_t count_groups2( daw::string_view input ) {
+				input.remove_prefix( );
 				auto result = count_groups( input, 0 );
 				return result.second;
 			}

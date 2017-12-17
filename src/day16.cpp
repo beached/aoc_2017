@@ -48,10 +48,10 @@ namespace daw {
 
 				void process_partner( daw::string_view &sv, std::string &dancers ) noexcept {
 					auto pos1 = dancers.find( sv.pop_front( ) );
-					sv.remove_prefix( );
+					sv.remove_prefix( );	// "/"
 					auto pos2 = dancers.find( sv.pop_front( ) );
 					std::swap( dancers[pos1], dancers[pos2] );
-					sv.remove_prefix( );
+					sv.remove_prefix( );	// ","
 				}
 			} // namespace
 

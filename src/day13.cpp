@@ -29,7 +29,7 @@
 
 #include <daw/daw_container_algorithm.h>
 #include <daw/daw_exception.h>
-#include <daw/daw_parser_addons.h>
+#include <daw/daw_parser_helper_sv.h>
 
 #include "day13.h"
 
@@ -55,11 +55,8 @@ namespace daw {
 
 				constexpr layer_t parse_line( daw::string_view line ) {
 					layer_t layer{0, 0};
-					auto pos = line.find( ':' );
-					auto depth_str = line.substr( 0, pos );
-					line.remove_prefix( pos + 2 );
-					daw::parser::parse_unsigned_int( depth_str.cbegin( ), depth_str.cend( ), layer.depth );
-					daw::parser::parse_unsigned_int( line.cbegin( ), line.cend( ), layer.range );
+					layer.depth = daw::parser::parse_unsigned_int<intmax_t>( line.pop_front( ": " ) );
+					layer.range = daw::parser::parse_unsigned_int<intmax_t>( line );
 					layer.range = layer.range == 0 ? 0 : ( layer.range - 1 ) * 2;
 					return layer;
 				}
