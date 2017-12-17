@@ -34,15 +34,15 @@ namespace daw {
 		namespace day16 {
 			namespace {
 				void process_spin( daw::string_view &sv, std::string &dancers ) noexcept {
-					auto const num_moves = daw::parser::parse_unsigned_int<size_t>( sv.chop( "," ) );
+					auto const num_moves = daw::parser::parse_unsigned_int<size_t>( sv.pop_front( "," ) );
 
 					daw::algorithm::rotate(
 					  dancers.rbegin( ), daw::next( dancers.rbegin( ), num_moves % dancers.size( ) ), dancers.rend( ) );
 				}
 
 				void process_exchange( daw::string_view &sv, std::string &dancers ) noexcept {
-					auto const pos1 = daw::parser::parse_unsigned_int<size_t>( sv.chop( "/" ) );
-					auto const pos2 = daw::parser::parse_unsigned_int<size_t>( sv.chop( "," ) );
+					auto const pos1 = daw::parser::parse_unsigned_int<size_t>( sv.pop_front( "/" ) );
+					auto const pos2 = daw::parser::parse_unsigned_int<size_t>( sv.pop_front( "," ) );
 					std::swap( dancers[pos1], dancers[pos2] );
 				}
 
