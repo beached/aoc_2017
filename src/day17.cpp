@@ -23,14 +23,55 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <list>
+#include <memory>
+#include <vector>
 
 #include "day17.h"
+#include <daw/daw_fixed_stack.h>
 
 namespace daw {
 	namespace aoc_2017 {
 		namespace day17 {
+			namespace {
+				constexpr node_t *next( node_t *n, intmax_t steps ) noexcept {
+					while( steps-- > 0 ) {
+						n = n->m_next;
+					}
+					return n;
+				}
 
-		}
-	} // namespace aoc_2017
+				template<typename Nodes>
+				constexpr node_t *insert( Nodes &nodes, size_t pos, node_t *cur_node, intmax_t value ) noexcept {
+					nodes[pos] = node_t{cur_node->m_next, value};
+					cur_node->m_next = &nodes[pos];
+					return &nodes[pos];
+				}
+			} // namespace
+
+			intmax_t calc_buffer_value( intmax_t puzzle_input ) {
+				std::vector<node_t> nodes( 2018, node_t{nullptr, 0} );
+				auto cur_node = &nodes[0];
+				cur_node->m_next = &nodes[0];
+
+				for( size_t n = 1; n <= 2017; ++n ) {
+					cur_node = next( cur_node, puzzle_input );
+					cur_node = insert( nodes, n, cur_node, static_cast<intmax_t>( n ) );
+				}
+				return cur_node->m_next->value;
+			}
+
+			intmax_t calc_buffer_value2( intmax_t puzzle_input ) {
+				std::vector<node_t> nodes( 50'000'001, node_t{nullptr, 0} );
+				auto cur_node = &nodes[0];
+				cur_node->m_next = &nodes[0];
+
+				for( size_t n = 1; n <= 50'000'000; ++n ) {
+					cur_node = next( cur_node, puzzle_input );
+					cur_node = insert( nodes, n, cur_node, static_cast<intmax_t>( n ) );
+				}
+				return nodes[0].m_next->value;
+			}
+		} // namespace day17
+	}   // namespace aoc_2017
 } // namespace daw
-

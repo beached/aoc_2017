@@ -27,8 +27,13 @@
 namespace daw {
 	namespace aoc_2017 {
 		namespace day17 {
+			struct node_t {
+				node_t *m_next;
+				intmax_t value;
+			};
 
+			intmax_t calc_buffer_value( intmax_t puzzle_input );
+			intmax_t calc_buffer_value2( intmax_t puzzle_input );
 		} // namespace day17
 	}   // namespace aoc_2017
 } // namespace daw
-

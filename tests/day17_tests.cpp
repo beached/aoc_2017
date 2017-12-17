@@ -33,9 +33,21 @@ namespace daw {
 	namespace aoc_2017 {
 		namespace day17 {
 			BOOST_AUTO_TEST_CASE( test_001 ) {
+				intmax_t const tst = 3;
+				auto ans = calc_buffer_value( tst );
+				BOOST_REQUIRE_EQUAL( ans, 638 );
+			}
 
+			BOOST_AUTO_TEST_CASE( test_002 ) {
+				intmax_t const tst = 376;
+				intmax_t ans1 = calc_buffer_value( tst );
+				BOOST_REQUIRE_EQUAL( ans1, 777 );
+				std::cout << "answer #1: " << ans1 << '\n';
+
+				auto ans2 = calc_buffer_value2( tst );
+				BOOST_REQUIRE_EQUAL( ans2, 39289581 );
+				std::cout << "answer #2: " << ans2 << '\n';
 			}
 		} // namespace day17
 	}   // namespace aoc_2017
 } // namespace daw
-
