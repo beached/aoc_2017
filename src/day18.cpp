@@ -36,18 +36,18 @@ namespace daw {
 		namespace day18 {
 			namespace {
 				constexpr daw::static_array_t<operand, 2> parse_arguments( daw::string_view sv, bool parse2 ) noexcept {
-					daw::static_array_t<operand, 2> result = {operand::noop_t{}, operand::noop_t{}};
+					daw::static_array_t<operand, 2> result = {operand::Noop{}, operand::Noop{}};
 					auto arg1 = sv.pop_front( " " );
 					if( impl::is_digit( arg1.front( ) ) ) {
-						result[0] = operand{operand::constant_t{}, daw::parser::parse_int<word_t>( arg1 )};
+						result[0] = operand{operand::Constant{}, daw::parser::parse_int<word_t>( arg1 )};
 					} else {
-						result[0] = operand{operand::register_t{}, arg1.front( ) - 'a'};
+						result[0] = operand{operand::Register{}, arg1.front( ) - 'a'};
 					}
 					if( parse2 ) {
 						if( impl::is_digit( sv.front( ) ) ) {
-							result[1] = operand{operand::constant_t{}, daw::parser::parse_int<word_t>( sv )};
+							result[1] = operand{operand::Constant{}, daw::parser::parse_int<word_t>( sv )};
 						} else {
-							result[1] = operand{operand::register_t{}, sv.front( ) - 'a'};
+							result[1] = operand{operand::Register{}, sv.front( ) - 'a'};
 						}
 					}
 					return result;
@@ -78,8 +78,8 @@ namespace daw {
 					return false;
 				}
 
-				daw::container::copy( m_threads[0].m_snd_queue, std::back_inserter( m_threads[1].m_rcv_queue ) );
-				daw::container::copy( m_threads[1].m_snd_queue, std::back_inserter( m_threads[0].m_rcv_queue ) );
+				daw::container::transform( m_threads[0].m_snd_queue, std::back_inserter( m_threads[1].m_rcv_queue ), []( auto const & msg ) { return msg.value; } );
+				daw::container::transform( m_threads[1].m_snd_queue, std::back_inserter( m_threads[0].m_rcv_queue ), []( auto const & msg ) { return msg.value; } );
 				m_threads[0].m_snd_queue.clear( );
 				m_threads[1].m_snd_queue.clear( );
 				return true;
@@ -92,31 +92,31 @@ namespace daw {
 					auto cmd = args.pop_front( " " );
 					switch( cmd.pop_front( ) ) {
 					case 'a':
-						result.emplace_back( operation::operator_type::add, parse_arguments( args, true ) );
+						result.emplace_back( operation::Add{}, parse_arguments( args, true ) );
 						break;
 					case 'j':
-						result.emplace_back( operation::operator_type::jgz, parse_arguments( args, true ) );
+						result.emplace_back( operation::Jgz{}, parse_arguments( args, true ) );
 						break;
 					case 'm':
 						switch( cmd.pop_front( ) ) {
 						case 'o':
-							result.emplace_back( operation::operator_type::mod, parse_arguments( args, true ) );
+							result.emplace_back( operation::Mod{}, parse_arguments( args, true ) );
 							break;
 						case 'u':
-							result.emplace_back( operation::operator_type::mul, parse_arguments( args, true ) );
+							result.emplace_back( operation::Mul{}, parse_arguments( args, true ) );
 							break;
 						}
 						break;
 					case 'r':
-						result.emplace_back( operation::operator_type::rcv, parse_arguments( args, false ) );
+						result.emplace_back( operation::Rcv{}, parse_arguments( args, false ) );
 						break;
 					case 's':
 						switch( cmd.pop_front( ) ) {
 						case 'e':
-							result.emplace_back( operation::operator_type::set, parse_arguments( args, true ) );
+							result.emplace_back( operation::Set{}, parse_arguments( args, true ) );
 							break;
 						case 'n':
-							result.emplace_back( operation::operator_type::snd, parse_arguments( args, false ) );
+							result.emplace_back( operation::Snd{}, parse_arguments( args, false ) );
 						}
 						break;
 					}
@@ -128,7 +128,7 @@ namespace daw {
 			  : m_registers{0}
 			  , m_pc{0}
 			  , m_flags{0}
-			  , m_send_count{0}
+			  , m_op_counts{0}
 			  , m_rcv_queue{}
 			  , m_snd_queue{} {
 
@@ -152,10 +152,11 @@ namespace daw {
 			}
 
 			bool exec_context_t::tick( operation const &op ) {
-				if( waiting( ) && op.m_operator != operation::operator_type::rcv ) {
+				if( waiting( ) && op.type( ) != operation::operator_type::rcv ) {
 					// This is so that non-used threads that are always waiting are not executing
 					return false;
 				}
+				++m_op_counts[static_cast<size_t>( op.type( ) )];
 				op.execute( *this );
 				if( m_flags.none( ) ) {
 					++m_pc;
@@ -173,8 +174,7 @@ namespace daw {
 			}
 
 			void exec_context_t::send( word_t msg ) {
-				++m_send_count;
-				m_snd_queue.push_back( msg );
+				m_snd_queue.push_back( {0, msg} );
 			}
 
 			bool exec_context_t::try_receive( word_t &dest ) {
@@ -189,6 +189,10 @@ namespace daw {
 			void exec_context_t::jump( word_t diff ) noexcept {
 				m_pc += diff;
 				m_flags[static_cast<size_t>( flags::stop_clock )] = true;
+			}
+
+			size_t exec_context_t::op_count( operation::operator_type op ) noexcept {
+				return m_op_counts[static_cast<size_t>(op)];
 			}
 
 			state_t compute_state( std::vector<std::string> const &program ) noexcept {

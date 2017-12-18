@@ -38,8 +38,8 @@ namespace daw {
 				std::vector<std::string> const tst = {"set a 1", "add a 2", "mul a a",  "mod a 5", "snd a",
 				                                      "set a 0", "rcv a",   "jgz a -1", "set a 1", "jgz a -2"};
 
-				//auto state = compute_state( tst );
-				//BOOST_REQUIRE_EQUAL( state.last_freq, 4 );
+				// auto state = compute_state( tst );
+				// BOOST_REQUIRE_EQUAL( state.last_freq, 4 );
 			}
 			BOOST_AUTO_TEST_CASE( test_002 ) {
 				std::vector<std::string> const tst = {
@@ -52,7 +52,7 @@ namespace daw {
 
 				state_t ans1 = compute_state( tst );
 				// BOOST_REQUIRE_EQUAL( ans1.last_freq, );
-				std::cout << "answer 2: " << ans1.m_threads[1].m_send_count << '\n';
+				std::cout << "answer 2: " << ans1.m_threads[1].op_count( operation::operator_type::snd ) << '\n';
 			}
 		} // namespace day18
 	}   // namespace aoc_2017

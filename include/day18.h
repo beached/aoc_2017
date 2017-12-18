@@ -41,35 +41,41 @@ namespace daw {
 			} // namespace impl
 			using word_t = intmax_t;
 
-			class operand {
-				enum class operand_type : uint8_t { nop = 0, cst, reg };
+			struct operand {
+				enum class operand_type : uint8_t { noop = 0, csnt, rgst };
+
+			private:
 				word_t m_value;
 				operand_type m_type;
 
 			public:
 				struct invalid_operation_exception {};
-				struct register_t {};
-				struct constant_t {};
-				struct noop_t {};
+				struct Register {};
+				struct Constant {};
+				struct Noop {};
 
-				constexpr operand( register_t, word_t location ) noexcept
+				constexpr operand( Register, word_t location ) noexcept
 				  : m_value{location}
-				  , m_type{operand_type::reg} {}
+				  , m_type{operand_type::rgst} {}
 
-				constexpr operand( constant_t, word_t value ) noexcept
+				constexpr operand( Constant, word_t value ) noexcept
 				  : m_value{value}
-				  , m_type{operand_type::cst} {}
+				  , m_type{operand_type::csnt} {}
 
-				constexpr operand( noop_t ) noexcept
+				constexpr operand( Noop ) noexcept
 				  : m_value{0}
-				  , m_type{operand_type::nop} {}
+				  , m_type{operand_type::noop} {}
+
+				constexpr operand_type type( ) const {
+					return m_type;
+				}
 
 				template<typename State>
 				constexpr word_t get( State &state ) const {
 					switch( m_type ) {
-					case operand_type::cst:
+					case operand_type::csnt:
 						return m_value;
-					case operand_type::reg:
+					case operand_type::rgst:
 						return state[m_value];
 					default:
 						throw invalid_operation_exception{};
@@ -78,7 +84,7 @@ namespace daw {
 
 				template<typename State>
 				constexpr void set( State &state, word_t value ) const noexcept {
-					if( m_type == operand_type::reg ) {
+					if( m_type == operand_type::rgst ) {
 						state[m_value] = value;
 					}
 				}
@@ -86,12 +92,43 @@ namespace daw {
 
 			struct operation {
 				struct invalid_set_exception {};
-				enum class operator_type { add, jgz, mod, mul, rcv, set, snd };
+				enum class operator_type : uint8_t { add = 0, jgz, mod, mul, rcv, set, snd };
+			private:
 				operator_type m_operator;
 				daw::static_array_t<operand, 2> m_operands;
 
-				constexpr operation( operator_type op, daw::static_array_t<operand, 2> operands ) noexcept
-				  : m_operator{op}
+			public:
+				constexpr operator_type type( ) const noexcept {
+					return m_operator;
+				}
+
+				struct Add {
+					static constexpr operator_type type = operator_type::add;
+				};
+				struct Jgz {
+					static constexpr operator_type type = operator_type::jgz;
+				};
+				struct Mod {
+					static constexpr operator_type type = operator_type::mod;
+				};
+				struct Mul {
+					static constexpr operator_type type = operator_type::mul;
+				};
+				struct Rcv {
+					static constexpr operator_type type = operator_type::rcv;
+				};
+				struct Set {
+					static constexpr operator_type type = operator_type::set;
+				};
+				struct Snd {
+					static constexpr operator_type type = operator_type::snd;
+				};
+
+				template<typename Operation,
+				         std::enable_if_t<daw::traits::is_one_of_v<Operation, Add, Jgz, Mod, Mul, Rcv, Set, Snd>,
+				                          std::nullptr_t> = nullptr>
+				constexpr operation( Operation, daw::static_array_t<operand, 2> operands ) noexcept
+				  : m_operator{Operation::type}
 				  , m_operands{std::move( operands )} {}
 
 				template<typename State>
@@ -133,11 +170,14 @@ namespace daw {
 				enum class flags { waiting = 0, stop_clock = 1 };
 				word_t m_pc;
 				std::bitset<2> m_flags;
-
 			public:
-				size_t m_send_count;
+				struct msg_t {
+					size_t dest;
+					word_t value;
+				};
+				std::array<size_t, 7> m_op_counts;
 				std::list<word_t> m_rcv_queue;
-				std::list<word_t> m_snd_queue;
+				std::list<msg_t> m_snd_queue;
 
 				exec_context_t( size_t id );
 				exec_context_t( exec_context_t const & ) = default;
@@ -154,6 +194,8 @@ namespace daw {
 				inline auto waiting( ) noexcept {
 					return m_flags[static_cast<size_t>( flags::waiting )];
 				}
+
+				size_t op_count( operation::operator_type op ) noexcept;
 
 				void jump( word_t diff ) noexcept;
 				bool tick( operation const &op );
