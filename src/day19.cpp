@@ -32,8 +32,8 @@ namespace daw {
 			namespace {
 				enum class directions { up = 0, down, left, right, halt };
 				struct pos_t {
-					intmax_t x;
-					intmax_t y;
+					size_t x;
+					size_t y;
 				};
 
 				result_t move_down( pos_t &pos, grid_t const &grid ) {
@@ -132,19 +132,23 @@ namespace daw {
 					switch( prev_dir ) {
 					case directions::up:
 					case directions::down:
-						if( pos.x > 0 && is_horiz( grid[pos.y][pos.x - 1] ) ) {
+						if( is_horiz( grid[pos.y][pos.x - 1] ) ) {
 							return directions::left;
-						} else if( pos.x < grid[pos.y].size( ) - 1 && is_horiz( grid[pos.y][pos.x + 1] ) ) {
+						}
+						if( is_horiz( grid[pos.y][pos.x + 1] ) ) {
 							return directions::right;
 						}
 						throw std::runtime_error( "Unknown state" );
 					case directions::left:
 					case directions::right:
-						if( pos.y > 0 && is_vert( grid[pos.y - 1][pos.x] ) ) {
+						if( is_vert( grid[pos.y - 1][pos.x] ) ) {
 							return directions::up;
-						} else if( pos.y < grid.size( ) - 1 && is_vert( grid[pos.y + 1][pos.x] ) ) {
+						}
+						if( is_vert( grid[pos.y + 1][pos.x] ) ) {
 							return directions::down;
 						}
+					case directions::halt:
+					default:
 						throw std::runtime_error( "Unknown state" );
 					}
 				}

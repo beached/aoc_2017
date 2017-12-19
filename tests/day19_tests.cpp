@@ -43,7 +43,7 @@ namespace daw {
 						"     A  |  C    ",
 						" F---|--|-E---+ ",
 						"     |  |  |  D ",
-						"     +B-+  +--+ ",
+						"     +B-+  +--+ "
 						"                "};
 				auto const ans = daw::bench_test( "test 1: ", [&]( ) { return compute_path( tst ); } );
 				BOOST_REQUIRE_EQUAL( ans->visits, "ABCDEF" );
@@ -259,7 +259,7 @@ grid_t const tst = {
 
 				auto const ans = daw::bench_test( "answer 1: ", [&]( ) { return compute_path( tst ); } );
 				BOOST_REQUIRE_EQUAL( ans->visits, "FEZDNIVJWT");
-				//BOOST_REQUIRE_EQUAL( ans->count, );
+				BOOST_REQUIRE_EQUAL( ans->count, 17200 );
 				std::cout << "answer 1: " << ans->visits << '\n';
 				std::cout << "answer 2: " << ans->count << '\n';
 			}
