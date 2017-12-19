@@ -22,11 +22,23 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <daw/daw_string_view.h>
 
 namespace daw {
 	namespace aoc_2017 {
 		namespace day19 {
+			using grid_t = std::vector<std::string>;
+			struct result_t {
+				std::string visits;
+				size_t count;
+
+				void append( result_t val );
+			};
+
+			result_t compute_path( grid_t const &grid );
 
 		} // namespace day19
 	}   // namespace aoc_2017
