@@ -34,6 +34,8 @@
 namespace daw {
 	namespace aoc_2017 {
 		namespace day18 {
+			struct invalid_asm_inst_exception {};
+
 			namespace impl {
 				constexpr bool is_digit( char c ) noexcept {
 					return ( '0' <= c && c <= '9' ) || c == '-';
@@ -103,33 +105,8 @@ namespace daw {
 					return m_operator;
 				}
 
-				struct Add {
-					static constexpr operator_type type = operator_type::add;
-				};
-				struct Jgz {
-					static constexpr operator_type type = operator_type::jgz;
-				};
-				struct Mod {
-					static constexpr operator_type type = operator_type::mod;
-				};
-				struct Mul {
-					static constexpr operator_type type = operator_type::mul;
-				};
-				struct Rcv {
-					static constexpr operator_type type = operator_type::rcv;
-				};
-				struct Set {
-					static constexpr operator_type type = operator_type::set;
-				};
-				struct Snd {
-					static constexpr operator_type type = operator_type::snd;
-				};
-
-				template<typename Operation,
-				         std::enable_if_t<daw::traits::is_one_of_v<Operation, Add, Jgz, Mod, Mul, Rcv, Set, Snd>,
-				                          std::nullptr_t> = nullptr>
-				constexpr operation( Operation, daw::static_array_t<operand, 2> operands ) noexcept
-				  : m_operator{Operation::type}
+				constexpr operation( operator_type op, daw::static_array_t<operand, 2> operands ) noexcept
+				  : m_operator{op}
 				  , m_operands{std::move( operands )} {}
 
 				template<typename State>
@@ -165,13 +142,14 @@ namespace daw {
 					}
 				}
 			};
+			using machine_code_t = std::vector<operation>;
 
 			class exec_context_t {
 				daw::static_array_t<word_t, 26> m_registers;
-				enum class flags { waiting = 0, stop_clock = 1 };
+				enum class flags { waiting = 0, stop_clock };
 				word_t m_pc;
 				std::bitset<2> m_flags;
-				std::vector<operation> m_program_memory;
+				machine_code_t m_program_memory;
 
 			public:
 				struct msg_t {
@@ -182,7 +160,7 @@ namespace daw {
 				std::list<word_t> m_rcv_queue;
 				std::list<msg_t> m_snd_queue;
 
-				exec_context_t( size_t id, std::vector<operation> program_memory );
+				exec_context_t( machine_code_t program_memory );
 				exec_context_t( exec_context_t const & ) = default;
 				exec_context_t( exec_context_t && ) = default;
 				exec_context_t &operator=( exec_context_t const & ) = default;
@@ -207,17 +185,14 @@ namespace daw {
 				word_t const &operator[]( size_t pos ) const noexcept;
 				word_t &operator[]( size_t pos ) noexcept;
 				word_t program_size( ) const noexcept;
+				void set_reg( char r, word_t value );
 			};
 
-			std::vector<operation> assemble_program( std::vector<std::string> const &program );
-
 			class state_t {
-
 			public:
-				state_t( std::vector<std::string> const &program0 );
-				state_t( std::vector<std::string> const &program0, std::vector<std::string> const &program1 );
+				std::vector<exec_context_t> m_threads;
 
-				daw::static_array_t<exec_context_t, 2> m_threads;
+				state_t( std::vector<machine_code_t> programs );
 
 				state_t( state_t const & ) = default;
 				state_t( state_t && ) noexcept = default;

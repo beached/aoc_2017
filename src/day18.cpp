@@ -35,7 +35,8 @@ namespace daw {
 	namespace aoc_2017 {
 		namespace day18 {
 			namespace {
-				constexpr daw::static_array_t<operand, 2> parse_arguments( daw::string_view sv, bool parse2 ) noexcept {
+				constexpr daw::static_array_t<operand, 2> parse_asm_arguments( daw::string_view sv,
+				                                                               size_t arg_count ) noexcept {
 					daw::static_array_t<operand, 2> result = {operand::Noop{}, operand::Noop{}};
 					auto arg1 = sv.pop_front( " " );
 					if( impl::is_digit( arg1.front( ) ) ) {
@@ -43,7 +44,7 @@ namespace daw {
 					} else {
 						result[0] = operand{operand::Register{}, arg1.front( ) - 'a'};
 					}
-					if( parse2 ) {
+					if( arg_count == 2 ) {
 						if( impl::is_digit( sv.front( ) ) ) {
 							result[1] = operand{operand::Constant{}, daw::parser::parse_int<word_t>( sv )};
 						} else {
@@ -51,14 +52,52 @@ namespace daw {
 						}
 					}
 					return result;
-				} // namespace
-			}   // namespace
+				}
 
-			state_t::state_t( std::vector<std::string> const &program0 )
-			  : m_threads{exec_context_t{0, assemble_program( program0 )}, exec_context_t{1, assemble_program( program0 )}} {}
+				std::pair<operation::operator_type, size_t> encode_operation( daw::string_view op ) {
+					if( op == "add" ) {
+						return {operation::operator_type::add, 2};
+					}
+					if( op == "jgz" ) {
+						return {operation::operator_type::jgz, 2};
+					}
+					if( op == "mod" ) {
+						return {operation::operator_type::mod, 2};
+					}
+					if( op == "mul" ) {
+						return {operation::operator_type::mul, 2};
+					}
+					if( op == "rcv" ) {
+						return {operation::operator_type::rcv, 1};
+					}
+					if( op == "set" ) {
+						return {operation::operator_type::set, 2};
+					}
+					if( op == "snd" ) {
+						return {operation::operator_type::snd, 1};
+					}
+					throw invalid_asm_inst_exception{};
+				}
 
-			state_t::state_t( std::vector<std::string> const &program0, std::vector<std::string> const &program1 )
-			  : m_threads{exec_context_t{0, assemble_program( program0 )}, exec_context_t{1, assemble_program( program1 )}} {}
+				machine_code_t assemble_program( std::vector<std::string> const &program ) {
+					machine_code_t result{};
+
+					daw::container::transform( program, std::back_inserter( result ), []( std::string const &line ) -> operation {
+						auto args = daw::make_string_view( line );
+						auto cmd = args.pop_front( " " );
+						auto op = encode_operation( cmd );
+						return {op.first, parse_asm_arguments( args, op.second )};
+					} );
+					return result;
+				}
+			} // namespace
+
+			state_t::state_t( std::vector<machine_code_t> programs ): m_threads{} {
+				daw::exception::Assert( programs.size( ) == 2, "Only 2 threads of execution supported" );
+				daw::container::transform( programs, std::back_inserter( m_threads ), [&]( machine_code_t const & prog ) {
+					return exec_context_t{ prog };
+				} );
+			}
 
 			bool state_t::tick( ) {
 				size_t wait_count = 0;
@@ -76,14 +115,15 @@ namespace daw {
 					return false;
 				}
 
+				// For now, hardwire 2 threads of execution always messaging each other
 				daw::container::transform( m_threads[0].m_snd_queue, std::back_inserter( m_threads[1].m_rcv_queue ),
 				                           []( auto const &msg ) { return msg.value; } );
 				daw::container::transform( m_threads[1].m_snd_queue, std::back_inserter( m_threads[0].m_rcv_queue ),
 				                           []( auto const &msg ) { return msg.value; } );
 
-				for( auto & th: m_threads ) {
+				for( auto &th : m_threads ) {
 					if( !th.m_rcv_queue.empty( ) ) {
-						th.waiting() = false;
+						th.waiting( ) = false;
 					}
 				}
 				m_threads[0].m_snd_queue.clear( );
@@ -91,56 +131,14 @@ namespace daw {
 				return true;
 			}
 
-			std::vector<operation> assemble_program( std::vector<std::string> const &program ) {
-				std::vector<operation> result{};
-				for( auto const &line : program ) {
-					auto args = daw::make_string_view( line );
-					auto cmd = args.pop_front( " " );
-					switch( cmd.pop_front( ) ) {
-					case 'a':
-						result.emplace_back( operation::Add{}, parse_arguments( args, true ) );
-						break;
-					case 'j':
-						result.emplace_back( operation::Jgz{}, parse_arguments( args, true ) );
-						break;
-					case 'm':
-						switch( cmd.pop_front( ) ) {
-						case 'o':
-							result.emplace_back( operation::Mod{}, parse_arguments( args, true ) );
-							break;
-						case 'u':
-							result.emplace_back( operation::Mul{}, parse_arguments( args, true ) );
-							break;
-						}
-						break;
-					case 'r':
-						result.emplace_back( operation::Rcv{}, parse_arguments( args, false ) );
-						break;
-					case 's':
-						switch( cmd.pop_front( ) ) {
-						case 'e':
-							result.emplace_back( operation::Set{}, parse_arguments( args, true ) );
-							break;
-						case 'n':
-							result.emplace_back( operation::Snd{}, parse_arguments( args, false ) );
-						}
-						break;
-					}
-				}
-				return result;
-			}
-
-			exec_context_t::exec_context_t( size_t id, std::vector<operation> program_memory )
+			exec_context_t::exec_context_t( machine_code_t program_memory )
 			  : m_registers{0}
 			  , m_pc{0}
 			  , m_flags{0}
 			  , m_program_memory{std::move( program_memory )}
 			  , m_op_counts{0}
 			  , m_rcv_queue{}
-			  , m_snd_queue{} {
-
-				m_registers['p' - 'a'] = static_cast<word_t>( id );
-			}
+			  , m_snd_queue{} {}
 
 			daw::static_array_t<word_t, 26> const &exec_context_t::registers( ) const noexcept {
 				return m_registers;
@@ -206,17 +204,26 @@ namespace daw {
 				return static_cast<word_t>( m_program_memory.size( ) );
 			}
 
+			void exec_context_t::set_reg( char r, word_t value ) {
+				m_registers[r - 'a'] = value;
+			}
+
 			state_t compute_state1( std::vector<std::string> const &program ) noexcept {
 				std::vector<std::string> program1 = {"jgz 1 0"};
-				state_t state{program, program1};
+				state_t state{{assemble_program( program ), assemble_program( program1 )}};
 				state.m_threads[1].waiting( ) = true;
 				while( state.tick( ) ) {
 					state.m_threads[1].waiting( ) = true;
 				}
 				return state;
 			}
+
 			state_t compute_state2( std::vector<std::string> const &program ) noexcept {
-				state_t state{program};
+				auto mc = assemble_program( program );
+				state_t state{{mc, mc}};
+				for( size_t n = 0; n < state.m_threads.size( ); ++n ) {
+					state.m_threads[n].set_reg( 'p', static_cast<word_t>( n ) );
+				}
 				while( state.tick( ) ) {
 				}
 
