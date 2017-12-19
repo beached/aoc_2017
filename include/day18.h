@@ -93,6 +93,7 @@ namespace daw {
 			struct operation {
 				struct invalid_set_exception {};
 				enum class operator_type : uint8_t { add = 0, jgz, mod, mul, rcv, set, snd };
+
 			private:
 				operator_type m_operator;
 				daw::static_array_t<operand, 2> m_operands;
@@ -170,6 +171,8 @@ namespace daw {
 				enum class flags { waiting = 0, stop_clock = 1 };
 				word_t m_pc;
 				std::bitset<2> m_flags;
+				std::vector<operation> m_program_memory;
+
 			public:
 				struct msg_t {
 					size_t dest;
@@ -179,7 +182,7 @@ namespace daw {
 				std::list<word_t> m_rcv_queue;
 				std::list<msg_t> m_snd_queue;
 
-				exec_context_t( size_t id );
+				exec_context_t( size_t id, std::vector<operation> program_memory );
 				exec_context_t( exec_context_t const & ) = default;
 				exec_context_t( exec_context_t && ) = default;
 				exec_context_t &operator=( exec_context_t const & ) = default;
@@ -195,27 +198,26 @@ namespace daw {
 					return m_flags[static_cast<size_t>( flags::waiting )];
 				}
 
-				size_t op_count( operation::operator_type op ) noexcept;
+				size_t op_count( operation::operator_type op ) const noexcept;
 
 				void jump( word_t diff ) noexcept;
-				bool tick( operation const &op );
+				bool tick( );
 				bool try_receive( word_t &dest );
 				void send( word_t msg );
 				word_t const &operator[]( size_t pos ) const noexcept;
 				word_t &operator[]( size_t pos ) noexcept;
+				word_t program_size( ) const noexcept;
 			};
 
-			std::vector<operation> compile_program( std::vector<std::string> const &program );
+			std::vector<operation> assemble_program( std::vector<std::string> const &program );
 
 			class state_t {
-				std::vector<operation> m_program_memory;
 
 			public:
+				state_t( std::vector<std::string> const &program0 );
+				state_t( std::vector<std::string> const &program0, std::vector<std::string> const &program1 );
+
 				daw::static_array_t<exec_context_t, 2> m_threads;
-
-				state_t( );
-
-				state_t( std::vector<std::string> const &program );
 
 				state_t( state_t const & ) = default;
 				state_t( state_t && ) noexcept = default;
@@ -226,7 +228,8 @@ namespace daw {
 				bool tick( );
 			};
 
-			state_t compute_state( std::vector<std::string> const &program ) noexcept;
+			state_t compute_state1( std::vector<std::string> const &program ) noexcept;
+			state_t compute_state2( std::vector<std::string> const &program ) noexcept;
 		} // namespace day18
 	}   // namespace aoc_2017
 } // namespace daw

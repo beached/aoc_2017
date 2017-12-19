@@ -54,38 +54,44 @@ namespace daw {
 				} // namespace
 			}   // namespace
 
-			state_t::state_t( )
-			  : m_program_memory{}
-			  , m_threads{exec_context_t{0}, exec_context_t{1}} {}
+			state_t::state_t( std::vector<std::string> const &program0 )
+			  : m_threads{exec_context_t{0, assemble_program( program0 )}, exec_context_t{1, assemble_program( program0 )}} {}
 
-			state_t::state_t( std::vector<std::string> const &program )
-			  : m_program_memory{compile_program( program )}
-			  , m_threads{exec_context_t{0}, exec_context_t{1}} {}
+			state_t::state_t( std::vector<std::string> const &program0, std::vector<std::string> const &program1 )
+			  : m_threads{exec_context_t{0, assemble_program( program0 )}, exec_context_t{1, assemble_program( program1 )}} {}
 
 			bool state_t::tick( ) {
 				size_t wait_count = 0;
 
 				bool result = true;
-				result &= m_threads[0].tick( m_program_memory[m_threads[0].pc( )] );
-				result &= m_threads[0].pc( ) >= 0 && m_threads[0].pc( ) < static_cast<word_t>( m_program_memory.size( ) );
+				result &= m_threads[0].tick( );
+				result &= ( m_threads[0].pc( ) >= 0 ) && ( m_threads[0].pc( ) < m_threads[0].program_size( ) );
 				wait_count += m_threads[0].waiting( ) ? 1 : 0;
 
-				result &= m_threads[1].tick( m_program_memory[m_threads[1].pc( )] );
-				result &= m_threads[1].pc( ) >= 0 && m_threads[1].pc( ) < static_cast<word_t>( m_program_memory.size( ) );
+				result &= m_threads[1].tick( );
+				result &= ( m_threads[1].pc( ) >= 0 ) && ( m_threads[1].pc( ) < m_threads[1].program_size( ) );
 				wait_count += m_threads[1].waiting( ) ? 1 : 0;
 
 				if( !result || wait_count == 2 ) {
 					return false;
 				}
 
-				daw::container::transform( m_threads[0].m_snd_queue, std::back_inserter( m_threads[1].m_rcv_queue ), []( auto const & msg ) { return msg.value; } );
-				daw::container::transform( m_threads[1].m_snd_queue, std::back_inserter( m_threads[0].m_rcv_queue ), []( auto const & msg ) { return msg.value; } );
+				daw::container::transform( m_threads[0].m_snd_queue, std::back_inserter( m_threads[1].m_rcv_queue ),
+				                           []( auto const &msg ) { return msg.value; } );
+				daw::container::transform( m_threads[1].m_snd_queue, std::back_inserter( m_threads[0].m_rcv_queue ),
+				                           []( auto const &msg ) { return msg.value; } );
+
+				for( auto & th: m_threads ) {
+					if( !th.m_rcv_queue.empty( ) ) {
+						th.waiting() = false;
+					}
+				}
 				m_threads[0].m_snd_queue.clear( );
 				m_threads[1].m_snd_queue.clear( );
 				return true;
 			}
 
-			std::vector<operation> compile_program( std::vector<std::string> const &program ) {
+			std::vector<operation> assemble_program( std::vector<std::string> const &program ) {
 				std::vector<operation> result{};
 				for( auto const &line : program ) {
 					auto args = daw::make_string_view( line );
@@ -124,10 +130,11 @@ namespace daw {
 				return result;
 			}
 
-			exec_context_t::exec_context_t( size_t id )
+			exec_context_t::exec_context_t( size_t id, std::vector<operation> program_memory )
 			  : m_registers{0}
 			  , m_pc{0}
 			  , m_flags{0}
+			  , m_program_memory{std::move( program_memory )}
 			  , m_op_counts{0}
 			  , m_rcv_queue{}
 			  , m_snd_queue{} {
@@ -151,10 +158,10 @@ namespace daw {
 				return m_flags[static_cast<size_t>( flags::waiting )];
 			}
 
-			bool exec_context_t::tick( operation const &op ) {
-				if( waiting( ) && op.type( ) != operation::operator_type::rcv ) {
-					// This is so that non-used threads that are always waiting are not executing
-					return false;
+			bool exec_context_t::tick( ) {
+				auto const &op = m_program_memory[m_pc];
+				if( waiting( ) ) {
+					return true;
 				}
 				++m_op_counts[static_cast<size_t>( op.type( ) )];
 				op.execute( *this );
@@ -191,11 +198,24 @@ namespace daw {
 				m_flags[static_cast<size_t>( flags::stop_clock )] = true;
 			}
 
-			size_t exec_context_t::op_count( operation::operator_type op ) noexcept {
-				return m_op_counts[static_cast<size_t>(op)];
+			size_t exec_context_t::op_count( operation::operator_type op ) const noexcept {
+				return m_op_counts[static_cast<size_t>( op )];
 			}
 
-			state_t compute_state( std::vector<std::string> const &program ) noexcept {
+			word_t exec_context_t::program_size( ) const noexcept {
+				return static_cast<word_t>( m_program_memory.size( ) );
+			}
+
+			state_t compute_state1( std::vector<std::string> const &program ) noexcept {
+				std::vector<std::string> program1 = {"jgz 1 0"};
+				state_t state{program, program1};
+				state.m_threads[1].waiting( ) = true;
+				while( state.tick( ) ) {
+					state.m_threads[1].waiting( ) = true;
+				}
+				return state;
+			}
+			state_t compute_state2( std::vector<std::string> const &program ) noexcept {
 				state_t state{program};
 				while( state.tick( ) ) {
 				}
