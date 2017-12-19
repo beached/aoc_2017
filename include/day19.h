@@ -20,27 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define BOOST_TEST_MODULE aoc_2017_dayN
-#include <daw/boost_test.h>
+#pragma once
 
-#include <cstdint>
-#include <cstdlib>
-#include <iostream>
-#include <string>
-#include <vector>
-
-#include <daw/daw_benchmark.h>
-
-#include "dayN.h"
+#include <daw/daw_string_view.h>
 
 namespace daw {
 	namespace aoc_2017 {
-		namespace dayN {
-			BOOST_AUTO_TEST_CASE( test_001 ) {
+		namespace day19 {
 
-				//auto const ans = daw::bench_test( "test 1: ", [&]( ) { return ; } );
-			}
-		} // namespace dayN
+		} // namespace day19
 	}   // namespace aoc_2017
 } // namespace daw
 
