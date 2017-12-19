@@ -109,24 +109,12 @@ namespace daw {
 						return directions::halt;
 					}
 
-					auto is_horiz = []( char c ) {
-						if( std::isalpha( c ) ) {
-							return true;
-						}
-						if( c == '-' ) {
-							return true;
-						}
-						return false;
+					auto const is_horiz = []( char c ) noexcept {
+						return std::isalpha( c ) || (c == '-');
 					};
 
-					auto is_vert = []( char c ) {
-						if( std::isalpha( c ) ) {
-							return true;
-						}
-						if( c == '|' ) {
-							return true;
-						}
-						return false;
+					auto const is_vert = []( char c ) noexcept {
+						return std::isalpha( c ) || ( c == '|' );
 					};
 
 					switch( prev_dir ) {
