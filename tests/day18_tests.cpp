@@ -29,6 +29,8 @@
 #include <string>
 #include <vector>
 
+#include <daw/daw_benchmark.h>
+
 #include "day18.h"
 
 namespace daw {
@@ -38,8 +40,8 @@ namespace daw {
 				std::vector<std::string> const tst = {"set a 1", "add a 2", "mul a a",  "mod a 5", "snd a",
 				                                      "set a 0", "rcv a",   "jgz a -1", "set a 1", "jgz a -2"};
 
-				auto const state = compute_state1( tst );
-				BOOST_REQUIRE_EQUAL( state.m_threads[1].m_rcv_queue.back( ) , 4 );
+				auto const state = daw::bench_test( "test 1: ", [&]( ) { return compute_state1( tst ); } );
+				BOOST_REQUIRE_EQUAL( state->m_threads[1].m_rcv_queue.back( ), 4 );
 			}
 			BOOST_AUTO_TEST_CASE( test_002 ) {
 				std::vector<std::string> const tst = {
@@ -50,12 +52,12 @@ namespace daw {
 				  "mul p -1", "add p b",   "jgz p 4",     "snd a",      "set a b",   "jgz 1 3",      "snd b",
 				  "set f 1",  "add i -1",  "jgz i -11",   "snd a",      "jgz f -16", "jgz a -19	"};
 
-				auto const state1 = compute_state1( tst );
-				auto const ans1 = state1.m_threads[1].m_rcv_queue.back( );
+				auto const state1 = daw::bench_test( "answer 1: ", [&]( ) { return compute_state1( tst ); } );
+				auto const ans1 = state1->m_threads[1].m_rcv_queue.back( );
 				BOOST_REQUIRE_EQUAL( ans1, 9423 );
 				std::cout << "answer 1: " << ans1 << '\n';
-				auto const state2 = compute_state2( tst );
-				auto const ans2 = state2.m_threads[1].op_count( operation::operator_type::snd );
+				auto const state2 = daw::bench_test( "answer 2: ", [&]( ) { return compute_state2( tst ); } );
+				auto const ans2 = state2->m_threads[1].op_count( operation::operator_type::snd );
 				BOOST_REQUIRE_EQUAL( ans2, 7620 );
 				std::cout << "answer 2: " << ans2 << '\n';
 			}
