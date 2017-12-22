@@ -43,9 +43,9 @@ namespace daw {
 			namespace impl {
 				namespace {
 					std::pair<bool, value_t> is_perfect_square( value_t n ) {
-						uint8_t h = static_cast<uint8_t>(static_cast<uintmax_t>(n) & 0xF); // last hexadecimal "digit"
+						uint8_t h = static_cast<uint8_t>( static_cast<uintmax_t>( n ) & 0xF ); // last hexadecimal "digit"
 						if( h > 9 ) {
-							return { false, 0 }; // return immediately in 6 cases out of 16.
+							return {false, 0}; // return immediately in 6 cases out of 16.
 						}
 
 						// Take advantage of Boolean short-circuit evaluation
@@ -206,6 +206,7 @@ namespace daw {
 						 *
 						 * Do each axis separately and check for common times afterwards.
 						 */
+
 						auto const A = part1.acceleration - part2.acceleration;
 						auto const V = part1.velocity - part2.velocity;
 						auto const P = part1.position - part2.position;
