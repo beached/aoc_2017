@@ -60,10 +60,10 @@ namespace daw {
 					intercept_t find_linear_intercept( value_t v, value_t p ) noexcept {
 						// No acceleration, one 1 intercept max
 						// intercept = -P/V when -P/V is a whole number
-						if( ( v > 0 && p > 0 ) || ( v < 0 && p < 0 ) ) {
+						/*if( ( v > 0 && p > 0 ) || ( v < 0 && p < 0 ) ) {
 							// Can never cross 0 as the velocity has same sign as position
 							return intercept_t{never_intercepts{}};
-						}
+						}*/
 						if( v == 0 ) {
 							if( p == 0 ) {
 								// Two particles with same velocity and position on this axis
@@ -73,11 +73,11 @@ namespace daw {
 							return intercept_t{never_intercepts{}};
 						}
 						auto const tmp = is_evenly_divisible( p, -v );
-						if( tmp ) {
+						if( tmp && (tmp.result+1) >= 0 ) {
 							// On this axis two particles match at t = tmp.result
 							// result is only meaningful if >= 0 as we are not going back in time
 							// result will always be >= 0 as it would be caught above where signs match
-							return intercept_t{tmp.result};
+							return intercept_t{tmp.result+1};
 						}
 						// Only a intercept if it crosses on a whole number, not fractional
 						return intercept_t{never_intercepts{}};
@@ -93,37 +93,76 @@ namespace daw {
 						// Check if vertex is <= 0 for upward(+a), >0 for downward < 0
 						// upward -> 2*a*p > v^2
 						// downward -> 2*a*p > v^2
+						/*
 						if( tmp_p1 > tmp ) {
 							// Parabola who's vertex is on the same side of axis as the sign of a(e.g. above axis and upward)
 							return intercept_t{never_intercepts{}};
 						}
-
+						*/
 						// quadratic, use quadratic equation, up to two times
 						// See if there is an integral answer to sqrt portion, if not we never collide
-						tmp -= tmp_p1;
+						tmp += tmp_p1;
 						if( tmp < 0 ) {
 							// Only real roots
 							return intercept_t{never_intercepts{}};
 						}
+
 						auto const sqrt_tmp = is_perfect_square( tmp );
 						if( sqrt_tmp.first ) {
 							// sqrt_tmp is a perfect square and will have an Integer solution
 
 							// Find positive interceptions
-							auto const roots = daw::algorithm::minmax_item( -v + sqrt_tmp.second, -v - sqrt_tmp.second );
+							auto const roots =
+							  daw::algorithm::minmax_item( (( -v + sqrt_tmp.second ) / a)+1, (( -v - sqrt_tmp.second ) / a)+1 );
+
 							if( roots.second < 0 ) {
 								// No positive roots
 								return intercept_t{never_intercepts{}};
 							}
 							if( roots.first < 0 ) {
 								// One positive root
-								return intercept_t{roots.second / a};
+								return intercept_t{roots.second};
 							}
 							// Two positive roots
-							return intercept_t{roots.first, roots.second / a};
+							if( roots.first != roots.second ) {
+								return intercept_t{roots.first, roots.second};
+							}
+							return intercept_t{roots.first};
 						}
 						// No integral solution for roots
 						return intercept_t{never_intercepts{}};
+					}
+
+					constexpr intercept_t union_intercept( intercept_t const &a, intercept_t const &b ) noexcept {
+						if( a.type == intercept_t::none && b.type == intercept_t::none ) {
+							return intercept_t{never_intercepts{}};
+						}
+						if( a.type == intercept_t::none ) {
+							return b;
+						}
+						if( b.type == intercept_t::none ) {
+							return a;
+						}
+						if( a.type == intercept_t::two_points || b.type == intercept_t::two_points ) {
+							std::array<value_t, 4> vals{a.values[0], a.values[1], b.values[0], b.values[1]};
+							std::sort( vals.begin( ), vals.end( ) );
+							auto last = std::unique( vals.begin( ), vals.end( ) );
+							switch( daw::distance( vals.begin( ), last ) ) {
+							case 1:
+								return intercept_t{vals[0]};
+							case 2:
+								return intercept_t{vals[0], vals[1]};
+							default:
+								break;
+							}
+							// Don't think this can happen, yet.
+							std::cerr << "Uh oh!!!!!\n";
+							std::abort( );
+						}
+						if( a.values[0] != b.values[0] ) {
+							return intercept_t{a.values[0], b.values[0]};
+						}
+						return intercept_t{a.values[0]};
 					}
 
 					constexpr intercept_t intersect_intercept( intercept_t const &a, intercept_t const &b ) noexcept {
@@ -189,7 +228,7 @@ namespace daw {
 						 * a = 0.5A
 						 * b = V
 						 * c = P
-						 * (-V +- sqrt( V^2 - 2AP ) )/A = 0
+						 * (-V +- sqrt( V^2 + 2AP ) )/A = 0
 						 *
 						 * We can save work by checking for zero crossings and
 						 * eliminating parts that can never cross zero.  Also, it must cross
@@ -207,13 +246,13 @@ namespace daw {
 						 * Do each axis separately and check for common times afterwards.
 						 */
 
-						auto const A = part1.acceleration - part2.acceleration;
-						auto const V = part1.velocity - part2.velocity;
-						auto const P = part1.position - part2.position;
+						auto const A = part2.acceleration - part1.acceleration;
+						auto const V = part2.velocity - part1.velocity;
+						auto const P = part2.position - part1.position;
 
-						auto const interx = find_intercept( A.x, V.x, P.x );
-						auto const intery = find_intercept( A.y, V.y, P.y );
-						auto const interz = find_intercept( A.z, V.z, P.z );
+						auto const interx = find_intercept( A.x, V.x, -P.x );
+						auto const intery = find_intercept( A.y, V.y, -P.y );
+						auto const interz = find_intercept( A.z, V.z, -P.z );
 
 						auto const intercepts = intersect_intercept( intersect_intercept( interx, intery ), interz );
 
@@ -231,7 +270,7 @@ namespace daw {
 					}
 
 					std::vector<particle> remove_collisions( std::vector<particle> const &particles ) {
-						std::vector<collision_t> all_collisions{};
+						std::list<collision_t> all_collisions{};
 
 						for( auto const &p : particles ) {
 							for( size_t n = p.id + 1; n < particles.size( ); ++n ) {
@@ -239,24 +278,27 @@ namespace daw {
 								all_collisions.insert( all_collisions.end( ), tmp.begin( ), tmp.end( ) );
 							}
 						}
-						std::sort( all_collisions.begin( ), all_collisions.end( ),
+						/*std::sort( all_collisions.begin( ), all_collisions.end( ),
 						           []( collision_t const &lhs, collision_t const &rhs ) { return lhs.time < rhs.time; } );
+						*/
+						all_collisions.sort( []( collision_t const &lhs, collision_t const &rhs ) {
+							return std::tie( lhs.time, lhs.id1, lhs.id2 ) < std::tie( rhs.time, rhs.id1, rhs.id2 );
+						} );
 
 						std::cout << "Potential collisions: " << all_collisions.size( ) << '\n';
 
 						std::vector<char> has_collided( particles.size( ), false );
-						for( size_t n = 0; n < all_collisions.size( ); ++n ) {
-							has_collided[all_collisions[n].id1] = true;
-							has_collided[all_collisions[n].id2] = true;
-							auto remove_from = daw::safe_next( all_collisions.begin( ), all_collisions.end( ), n + 1 );
-							all_collisions.erase(
-							  std::remove_if( remove_from, all_collisions.end( ),
-							                  [&]( collision_t const &c ) {
-								                  return c.time > all_collisions[n].time &&
-								                         ( all_collisions[n].id1 == c.id1 || all_collisions[n].id1 == c.id2 ||
-								                           all_collisions[n].id2 == c.id1 || all_collisions[n].id2 == c.id2 );
-							                  } ),
-							  all_collisions.end( ) );
+						for( auto it = all_collisions.begin( ); it != all_collisions.end( ); ++it ) {
+							has_collided[it->id1] = true;
+							has_collided[it->id2] = true;
+							auto remove_from = daw::safe_next( it, all_collisions.end( ) );
+							all_collisions.erase( std::remove_if( remove_from, all_collisions.end( ),
+							                                      [&]( collision_t const &c ) {
+								                                      return c.time > it->time &&
+								                                             ( it->id1 == c.id1 || it->id1 == c.id2 ||
+								                                               it->id2 == c.id1 || it->id2 == c.id2 );
+							                                      } ),
+							                      all_collisions.end( ) );
 						}
 						std::cout << "Actual collisions: " << all_collisions.size( ) << '\n';
 						std::vector<particle> result{};
@@ -275,6 +317,40 @@ namespace daw {
 							  return particle{sv, Id++};
 						  } );
 						return particles;
+					}
+
+					void simulate( std::vector<particle> &particles ) {
+						size_t chg_count = 0;
+						size_t t = 0;
+						while( true ) {
+							for( auto &p : particles ) {
+								p.velocity += p.acceleration;
+								p.position += p.velocity;
+							}
+							std::vector<particle> p2{};
+							for( auto const &p : particles ) {
+								auto count =
+								  std::count_if( particles.cbegin( ), particles.cend( ), [position = p.position]( auto const &part ) {
+									  return part.position == position;
+								  } );
+								if( count == 1 ) {
+									p2.push_back( p );
+								} else {
+									// std::cout << "t: " << t << " removing: " << p.id << " p:<" << p.position.x << "," << p.position.y
+									// << "," << p.position.z << ">\n";
+								}
+							}
+							if( particles.size( ) == p2.size( ) ) {
+								if( chg_count >= 1'000 ) {
+									break;
+								}
+								++chg_count;
+							} else {
+								chg_count = 0;
+							}
+							++t;
+							particles = std::move( p2 );
+						}
 					}
 				} // namespace
 			}   // namespace impl
@@ -303,6 +379,7 @@ namespace daw {
 
 				std::cout << "Starting with " << particles.size( ) << " particles\n";
 				particles = impl::remove_collisions( std::move( particles ) );
+				// impl::simulate( particles );
 				std::cout << "Left with " << particles.size( ) << " particles\n";
 				auto result = particles.size( );
 				return result;

@@ -36,6 +36,7 @@
 namespace daw {
 	namespace aoc_2017 {
 		namespace day20 {
+			/*
 			BOOST_AUTO_TEST_CASE( test_001 ) {
 				std::cout << '\n';
 				std::vector<std::string> tst = {"p=<3,0,0>, v=<2,0,0>, a=<-1,0,0>", "p=<4,0,0>, v=<0,0,0>, a=<-2,0,0>"};
@@ -91,6 +92,8 @@ namespace daw {
 				std::cout << "test 6: " << *ans1 << '\n';
 				BOOST_REQUIRE_EQUAL( *ans1, 2 );
 			}
+
+			*/
 
 			BOOST_AUTO_TEST_CASE( known_answer_001 ) {
 				std::cout << '\n';
@@ -2113,3 +2116,4 @@ namespace daw {
 		} // namespace day20
 	}   // namespace aoc_2017
 } // namespace daw
+
