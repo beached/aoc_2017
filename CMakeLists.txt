@@ -8,6 +8,8 @@ find_package( Boost 1.59.0 REQUIRED COMPONENTS system filesystem regex unit_test
 
 add_definitions( -DBOOST_ALL_NO_LIB -DBOOST_ALL_DYN_LINK )
 
+find_package( Threads REQUIRED )
+
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL 'MSVC' )
 	add_compile_options( -D_WIN32_WINNT=0x0601 /std:c++latest )
 else( )
@@ -30,6 +32,17 @@ externalproject_add(
     INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
 )
+
+externalproject_add(
+    function_stream_prj
+    GIT_REPOSITORY "https://github.com/beached/function_stream.git"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/function_stream"
+    GIT_TAG "master"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
+)
+
+
 
 include_directories( SYSTEM "${CMAKE_BINARY_DIR}/install/include" )
 link_directories( "${CMAKE_BINARY_DIR}/install/lib" )
@@ -164,7 +177,7 @@ add_dependencies( aoc_2017_day19_bin header_libraries_prj )
 add_test( aoc_2017_day19_test aoc_2017_day19_bin )
 
 add_executable( aoc_2017_day20_bin ${HEADER_FOLDER}/day20.h ${SOURCE_FOLDER}/day20.cpp ${TEST_FOLDER}/day20_tests.cpp )
-target_link_libraries( aoc_2017_day20_bin ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} )
-add_dependencies( aoc_2017_day20_bin header_libraries_prj )
+target_link_libraries( aoc_2017_day20_bin task_scheduler_lib function_stream_lib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} ${COMPILER_SPECIFIC_LIBS} ${CMAKE_THREAD_LIBS_INIT} )
+add_dependencies( aoc_2017_day20_bin function_stream_prj header_libraries_prj )
 add_test( aoc_2017_day20_test aoc_2017_day20_bin )
 

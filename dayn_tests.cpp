@@ -40,6 +40,11 @@ namespace daw {
 
 				//auto const ans = daw::bench_test( "test 1: ", [&]( ) { return ; } );
 			}
+
+			BOOST_AUTO_TEST_CASE( test_002 ) {
+
+				//auto const ans = daw::bench_test( "test 1: ", [&]( ) { return ; } );
+			}
 		} // namespace dayN
 	}   // namespace aoc_2017
 } // namespace daw
