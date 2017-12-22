@@ -60,10 +60,10 @@ namespace daw {
 					intercept_t find_linear_intercept( value_t v, value_t p ) noexcept {
 						// No acceleration, one 1 intercept max
 						// intercept = -P/V when -P/V is a whole number
-						/*if( ( v > 0 && p > 0 ) || ( v < 0 && p < 0 ) ) {
+						if( ( v > 0 && p > 0 ) || ( v < 0 && p < 0 ) ) {
 							// Can never cross 0 as the velocity has same sign as position
 							return intercept_t{never_intercepts{}};
-						}*/
+						}
 						if( v == 0 ) {
 							if( p == 0 ) {
 								// Two particles with same velocity and position on this axis
@@ -73,11 +73,11 @@ namespace daw {
 							return intercept_t{never_intercepts{}};
 						}
 						auto const tmp = is_evenly_divisible( p, -v );
-						if( tmp && (tmp.result+1) >= 0 ) {
+						if( tmp ) {
 							// On this axis two particles match at t = tmp.result
 							// result is only meaningful if >= 0 as we are not going back in time
 							// result will always be >= 0 as it would be caught above where signs match
-							return intercept_t{tmp.result+1};
+							return intercept_t{tmp.result};
 						}
 						// Only a intercept if it crosses on a whole number, not fractional
 						return intercept_t{never_intercepts{}};
@@ -93,12 +93,12 @@ namespace daw {
 						// Check if vertex is <= 0 for upward(+a), >0 for downward < 0
 						// upward -> 2*a*p > v^2
 						// downward -> 2*a*p > v^2
-						/*
+
 						if( tmp_p1 > tmp ) {
 							// Parabola who's vertex is on the same side of axis as the sign of a(e.g. above axis and upward)
 							return intercept_t{never_intercepts{}};
 						}
-						*/
+
 						// quadratic, use quadratic equation, up to two times
 						// See if there is an integral answer to sqrt portion, if not we never collide
 						tmp += tmp_p1;
@@ -113,7 +113,7 @@ namespace daw {
 
 							// Find positive interceptions
 							auto const roots =
-							  daw::algorithm::minmax_item( (( -v + sqrt_tmp.second ) / a)+1, (( -v - sqrt_tmp.second ) / a)+1 );
+							  daw::algorithm::minmax_item( ( -v + sqrt_tmp.second ) / a, ( -v - sqrt_tmp.second ) / a );
 
 							if( roots.second < 0 ) {
 								// No positive roots
@@ -222,12 +222,12 @@ namespace daw {
 						 * V = part1.velocity - part2.velocity
 						 * P = part1.position - part2.position
 						 *
-						 * 0.5A*t^2 + Vt + P = 0 if they do
+						 * p(t) = 0.5A0*t^2 + V0t - P0 = 0 if they do
 						 *
 						 * (-b +- sqrt( b^2 - 4ac ))/2a
 						 * a = 0.5A
 						 * b = V
-						 * c = P
+						 * c = -P
 						 * (-V +- sqrt( V^2 + 2AP ) )/A = 0
 						 *
 						 * We can save work by checking for zero crossings and
@@ -238,7 +238,7 @@ namespace daw {
 						 * when/if they collide.
 						 *
 						 * If acceleration is 0 for any axis, it is a line
-						 * f(t) = Vt + P
+						 * p(t) = V0t + P0
 						 * intercept = -P/V when evenly divisible, otherwise no collision
 						 *
 						 * All three axis must have same a common for collision.
