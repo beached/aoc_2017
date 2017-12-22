@@ -107,6 +107,9 @@ namespace daw {
 						}
 						auto const sqrt_tmp = is_perfect_square( tmp );
 						if( sqrt_tmp.first ) {
+							// sqrt_tmp is a perfect square and will have an Integer solution
+
+							// Find positive interceptions
 							auto const roots = daw::algorithm::minmax_item( -v + sqrt_tmp.second, -v - sqrt_tmp.second );
 							if( roots.second < 0 ) {
 								// No positive roots
